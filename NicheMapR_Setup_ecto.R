@@ -43,10 +43,16 @@ NicheMapR_ecto <- function(niche) {
   shadmet<-as.matrix(shadmet)
   shadsoil<-as.matrix(shadsoil)
   soil<-as.matrix(soil)
+  metout<-metout[((ystart-1993)*24*365+1):(((ystart-1993)*24*365)+nyears*24*365),]
+  shadmet<-shadmet[((ystart-1993)*24*365+1):(((ystart-1993)*24*365)+nyears*24*365),]
+  shadsoil<-shadsoil[((ystart-1993)*24*365+1):(((ystart-1993)*24*365)+nyears*24*365),]
+  soil<-soil[((ystart-1993)*24*365+1):(((ystart-1993)*24*365)+nyears*24*365),]
   RAINFALL<-as.matrix(read.csv(file=paste(microin,'/rainfall.csv',sep=""),sep=","))[,2]
+  RAINFALL<-RAINFALL[((ystart-1993)*365+1):(((ystart-1993)*365)+nyears*365)]
   ectoin<-read.csv(file=paste(microin,'/ectoin.csv',sep=""),sep=",")
   DEP<-as.matrix(read.csv(file=paste(microin,'/DEP.csv',sep=""),sep=","))[,2]
   MAXSHADES<-as.matrix(read.csv(file=paste(microin,'/MAXSHADES.csv',sep=""),sep=","))[,2]
+  MAXSHADES<-MAXSHADES[((ystart-1993)*365+1):(((ystart-1993)*365)+nyears*365)]
   
   metout2=matrix(data = 0., nrow = 24*7300, ncol = 18) 
   soil2=matrix(data = 0., nrow = 24*7300, ncol = 12)

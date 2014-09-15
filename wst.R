@@ -15,11 +15,16 @@ microin<-"microclimate" # subfolder containing the microclimate input data
 live<-1 # live (metabolism) or dead animal?
 enberr<-0.0002 # tolerance for energy balance
 timeinterval<-365 # number of time intervals in a year
-ystart<-read.csv('ectoin.csv')[7,2]
-yfinish<-read.csv('ectoin.csv')[8,2]
-nyears<-ceiling(nrow(read.csv('rainfall.csv'))/365) # number of years the simulation runs for (work out from input data)
+ystart<-read.csv(paste(microin,'/ectoin.csv',sep=""))[7,2]
+yfinish<-read.csv(paste(microin,'/ectoin.csv',sep=""))[8,2]
+nyears<-ceiling(nrow(read.csv(paste(microin,'/rainfall.csv',sep="")))/365) # number of years the simulation runs for (work out from input data)
+
+ystart<-2006
+yfinish<-2006
+nyears<-yfinish-ystart+1
+
 write_input<-1 # write input into 'csv input' folder? (1 yes, 0 no)
-longlat<-c(read.csv('ectoin.csv')[3,2],read.csv('ectoin.csv')[4,2])
+longlat<-c(read.csv(paste(microin,'/ectoin.csv',sep=""))[3,2],read.csv(paste(microin,'/ectoin.csv',sep=""))[4,2])
 
 # habitat settings
 FLTYPE<-0.0  # fluid type 0.0=air, 1.0=water 
@@ -300,10 +305,10 @@ source('NicheMapR_Setup_ecto.R')
 nicheout<-NicheMapR_ecto(niche)
 
 # retrieve output
-metout<-as.data.frame(read.table(file=paste(microin,'/metout.csv',sep=""),sep=",",header=TRUE))[,-1]
-shadmet<-as.data.frame(read.table(paste(microin,'/shadmet.csv',sep=""),sep=",",header=TRUE))[,-1]
-soil<-as.data.frame(read.table(paste(microin,'/soil.csv',sep=""),sep=",",header=TRUE))[,-1]
-shadsoil<-as.data.frame(read.table(paste(microin,'/shadsoil.csv',sep=""),sep=",",header=TRUE))[,-1]
+#metout<-as.data.frame(read.table(file=paste(microin,'/metout.csv',sep=""),sep=",",header=TRUE))[,-1]
+#shadmet<-as.data.frame(read.table(paste(microin,'/shadmet.csv',sep=""),sep=",",header=TRUE))[,-1]
+#soil<-as.data.frame(read.table(paste(microin,'/soil.csv',sep=""),sep=",",header=TRUE))[,-1]
+#shadsoil<-as.data.frame(read.table(paste(microin,'/shadsoil.csv',sep=""),sep=",",header=TRUE))[,-1]
 rainfall<-as.data.frame(nicheout$RAINFALL)
 grassgrowths<-as.data.frame(nicheout$grassgrowths)
 grasstsdms<-as.data.frame(nicheout$grasstsdms)
