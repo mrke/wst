@@ -114,16 +114,16 @@ container<-1 # run the container model? (aquatic start of life cycle, e.g. frog 
 conth<-50 # cylindrical container/pond height (cm)
 contw<-3000. # cylindrical container/pond diameter (cm)
 contype<-1 # is 'containter' sitting on the surface, like a bucket (0) or sunk into the ground like a pond (1)
-rainmult<-1.9 # rainfall multiplier to reflect catchment (don't make this zero unless you want a drought!)
+rainmult<-3 # rainfall multiplier to reflect catchment (don't make this zero unless you want a drought!)
 continit<-0 # initial container water level (cm)
 conthole<- 2.8#2.8 # daily loss of height (mm) due to 'hole' in container (e.g. infiltration to soil, drawdown from water tank)
 contonly<-0 # just run the container model and quit?
-contwet<-80 # percent wet value for container
-wetmod<-1 # run the wetland model?
+contwet<-100 # percent wet value for container
+wetmod<-0 # run the wetland model?
 soilmoisture<-0 # run the soil moisture model? (models near-surface soil moisture rather than a pond as a function of field capacity and wilting point)
 
 # which energy budget model to use? 
-DEB<-0 # run the DEB model (1) or just heat balance, using allometric respiration below (0)
+DEB<-1 # run the DEB model (1) or just heat balance, using allometric respiration below (0)
 
 # parameters for allometric model of respiration, for use in heat budget when DEB model is not
 # run so that metabolic heat generation and respiratory water loss can be calculated.
@@ -139,22 +139,22 @@ MR_3<-0.038
 fract<-1.
 f<-1.
 MsM<-186.03*6. # produces a stomach volume of 5.3 cm3/100 g, as measured for Disosaurus dorsalis
-z<-5.255*fract
-delta<- 0.4176
+z<-5.127*fract
+delta<- 0.4012
 kappa_X<-0.85
-v_dotref<-0.02002/24.
-kappa<-0.6373
-p_Mref<-32.78/24.
-E_G<-7787
+v_dotref<-0.02/24.
+kappa<-0.7002
+p_Mref<-40/24.
+E_G<-7200
 k_R<-0.95
 k_J<-p_Mref/E_G
-E_Hb<-7721*fract^3
+E_Hb<-4915*fract^3
 E_Hj<-E_Hb*fract^3
-E_Hp<-339800*fract^3
-h_aref<-0.000000000000001218/24.
+E_Hp<-2.3e+05*fract^3
+h_aref<-1.595e-11/24.
 s_G<-0.01
 
-E_Egg<-44970# J, initial energy of one egg
+E_Egg<-4.558e+04# J, initial energy of one egg
 svl_met<-11 # mm, snout vent length at metamorphosis
 E_m<-(p_Mref*z/kappa)/v_dotref
 p_Xm<-12420 # J/h, maximum intake rate when feeding
@@ -171,11 +171,11 @@ gam<-1.6
 
 # these next five parameters control the thermal response, effectively generating a thermal response curve
 T_REF<-20 # degrees C, reference temperature - correction factor is 1 for this temperature
-TA<-17885
+TA<-6000
 TAL<-50000.
-TAH<-48000.
-TL<-280.
-TH<-303.5
+TAH<-90000.
+TL<-273
+TH<-311
 
 # life-stage specific parameters
 arrhenius<-matrix(data = 0, nrow = 8, ncol = 5)
@@ -263,7 +263,7 @@ daylengthstart<- 14 # threshold daylength for initiating breeding
 daylengthfinish<- 10. # threshold daylength for terminating breeding
 photodirs <- 0 # is the start daylength trigger during a decrease (0) or increase (1) in day length?
 photodirf <- 0 # is the finish daylength trigger during a decrease (0) or increase (1) in day length?
-startday<-1 # make it 90 for T. rugosa loop day of year at which DEB model starts
+startday<-110 # make it 90 for T. rugosa loop day of year at which DEB model starts
 breedtempthresh<-200 # body temperature threshold below which breeding will occur
 breedtempcum<-24*7 # cumulative time below temperature threshold for breeding that will trigger breeding
 
@@ -282,19 +282,20 @@ frogstage<-0 # 0 is whole life cycle, 1 is just to metamorphosis (then reset and
 
 # metabolic depression
 aestivate<-1
-depress<-0.2
+depress<-0.051
 
 # DEB model initial conditions
-v_init<-3e-9
-E_init<-E_Egg/v_init
-E_H_init<-0
-v_init<-1.155^3
+# v_init<-3e-9
+# E_init<-E_Egg/v_init
+# E_H_init<-0
+v_init<-1.168^3
 E_init<-E_m
 E_H_init<-E_Hb+5
-v_init<-5.255^3
-E_init<-E_m
-E_H_init<-E_Hp+5
-stage<-3
+stage<-1
+# v_init<-5.255^3
+# E_init<-E_m
+# E_H_init<-E_Hp+5
+# stage<-3
 loop<-0
 warm<-0
 ma<-9e-4#5.5e-4  # hourly active mortality rate (probability of mortality per hour)
@@ -381,12 +382,16 @@ with(environ, plot(CONDEP~dates,type = "l"))
 with(environ, plot(WATERTEMP~dates,type = "l"))
 with(environ, points(CONDEP/10~dates,type = "l",col='red'))
 with(environ, {xyplot(TC+ACT*5+SHADE/10+DEP/10~dates,ylim=c(-15,50),type = "l")})
+with(debout, {plot(WETMASS,type = "l",col='blue')})
+
 
 curyear<-1993
 daystart<-paste(substr(curyear,3,4),'/01/01',sep="") # y/m/d
 dayfin<-paste(substr(curyear,3,4),'/12/31',sep="") # y/m/d
 plotpred<-subset(environ, format(environ$dates, "%y/%m/%d")>= daystart & format(environ$dates, "%y/%m/%d")<=dayfin)
 with(plotpred, {xyplot(TC+ACT*5+SHADE/10+DEP/10~dates,ylim=c(-15,50),type = "l")})
+
+
 
 with(environ, {plot(TC~dates,ylim=c(-15,50),type = "l")})
 with(debout, {points(Body_cond~dates,ylim=c(-15,50),type = "l",col='blue')})

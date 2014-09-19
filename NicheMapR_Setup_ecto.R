@@ -49,7 +49,7 @@ NicheMapR_ecto <- function(niche) {
   shadsoil<-shadsoil[((ystart-yst)*24*365+1):(((ystart-yst)*24*365)+nyears*24*365),]
   soil<-soil[((ystart-yst)*24*yst+1):(((ystart-yst)*24*365)+nyears*24*365),]
   RAINFALL<-as.matrix(read.csv(file=paste(microin,'/rainfall.csv',sep=""),sep=","))[,2]
-  RAINFALL<-RAINFALL[((ystart-yst)*365+1):(((ystart-yst)*365)+nyears*365)]+100
+  RAINFALL<-RAINFALL[((ystart-yst)*365+1):(((ystart-yst)*365)+nyears*365)]
   ectoin<-read.csv(file=paste(microin,'/ectoin.csv',sep=""),sep=",")
   DEP<-as.matrix(read.csv(file=paste(microin,'/DEP.csv',sep=""),sep=","))[,2]
   MAXSHADES<-as.matrix(read.csv(file=paste(microin,'/MAXSHADES.csv',sep=""),sep=","))[,2]
