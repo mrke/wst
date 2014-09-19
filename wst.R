@@ -1,14 +1,16 @@
 ############# ectotherm model parameters ################################
 
+microin<-"microclimate" # subfolder containing the microclimate input data
+
 # get input microclimate files and read them in
-# file.copy('/git/micro_australia/metout.csv','metout.csv',overwrite=TRUE)
-# file.copy('/git/micro_australia/shadmet.csv','shadmet.csv',overwrite=TRUE)
-# file.copy('/git/micro_australia/soil.csv','soil.csv',overwrite=TRUE)
-# file.copy('/git/micro_australia/shadsoil.csv','shadsoil.csv',overwrite=TRUE)
-# file.copy('/git/micro_australia/rainfall.csv','rainfall.csv',overwrite=TRUE)
-# file.copy('/git/micro_australia/ectoin.csv','ectoin.csv',overwrite=TRUE)
-# file.copy('/git/micro_australia/DEP.csv','DEP.csv',overwrite=TRUE)
-# file.copy('/git/micro_australia/MAXSHADES.csv','MAXSHADES.csv',overwrite=TRUE)
+# file.copy('/git/micro_australia/metout.csv',paste(microin,'/metout.csv',sep=""),overwrite=TRUE)
+# file.copy('/git/micro_australia/shadmet.csv',paste(microin,'/shadmet.csv',sep=""),overwrite=TRUE)
+# file.copy('/git/micro_australia/soil.csv',paste(microin,'/soil.csv',sep=""),overwrite=TRUE)
+# file.copy('/git/micro_australia/shadsoil.csv',paste(microin,'/shadsoil.csv',sep=""),overwrite=TRUE)
+# file.copy('/git/micro_australia/rainfall.csv',paste(microin,'/rainfall.csv',sep=""),overwrite=TRUE)
+# file.copy('/git/micro_australia/ectoin.csv',paste(microin,'/ectoin.csv',sep=""),overwrite=TRUE)
+# file.copy('/git/micro_australia/DEP.csv',paste(microin,'/DEP.csv',sep=""),overwrite=TRUE)
+# file.copy('/git/micro_australia/MAXSHADES.csv',paste(microin,'/MAXSHADES.csv',sep=""),overwrite=TRUE)
 
 microin<-"microclimate" # subfolder containing the microclimate input data
 # simulation settings
@@ -19,11 +21,11 @@ ystart<-read.csv(paste(microin,'/ectoin.csv',sep=""))[7,2]
 yfinish<-read.csv(paste(microin,'/ectoin.csv',sep=""))[8,2]
 nyears<-ceiling(nrow(read.csv(paste(microin,'/rainfall.csv',sep="")))/365) # number of years the simulation runs for (work out from input data)
 
-ystart<-2006
-yfinish<-2006
+ystart<-1993
+yfinish<-2002
 nyears<-yfinish-ystart+1
 
-write_input<-1 # write input into 'csv input' folder? (1 yes, 0 no)
+write_input<-0 # write input into 'csv input' folder? (1 yes, 0 no)
 longlat<-c(read.csv(paste(microin,'/ectoin.csv',sep=""))[3,2],read.csv(paste(microin,'/ectoin.csv',sep=""))[4,2])
 
 # habitat settings
