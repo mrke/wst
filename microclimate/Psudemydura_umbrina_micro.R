@@ -305,7 +305,7 @@ dates<-seq(ISOdate(1911,1,1,tz=tzone)-3600*12, ISOdate((2015),1,1,tz=tzone)-3600
 dates<-subset(dates, format(dates, "%m/%d")!= "02/29") # remove leap years
 dates<-subset(dates, !duplicated(as.matrix(dates[2110:2120])))
 dates<-unique(dates)
-dates2<-seq(ISOdate(ystart,1,1,tz=tzone)-3600*12, ISOdate((ystart+nyears),1,1,tz=tzone)-3600*13, by="days") 
+dates2<-seq(ISOdate(1911,1,1,tz=tzone)-3600*12, ISOdate(2015,1,1,tz=tzone)-3600*13, by="days") 
 dates2<-subset(dates2, format(dates2, "%m/%d")!= "02/29") # remove leap years
 
 for(i in 1:length(ystarts)){
@@ -514,58 +514,11 @@ for(i in 1:length(ystarts)){
 }
 write.csv(rainfallAll,paste(microdir,'rainfall',ystart,'_',yfinish,'.csv',sep=""))
 rainfallAll<-cbind(dates2,rainfallAll)
-#plot(rainfallAll[,4]~rainfallAll$dates,type='l')
+plot(rainfallAll$x~rainfallAll$dates,type='l')
 
 
-plot(wetlandTempsAll$x,type='l')
-    write.csv(soil[,6],paste(microdir,'wetlandTemps.csv',sep=""))
-    write.csv(metout[,10],paste(microdir,'wetlandDepths.csv',sep=""))
-
-    write.csv(metout,paste(microdir,'metout.csv',sep=""))
-    write.csv(soil,paste(microdir,'soil.csv',sep=""))
-    write.csv(soilpot,paste(microdir,'soilpot.csv',sep=""))
-    write.csv(humid,paste(microdir,'humid.csv',sep=""))
-    write.csv(soilmoist,paste(microdir,'soilmoist.csv',sep=""))
-    if(runshade==0){
-      write.csv(metout,paste(microdir,'shadmet.csv',sep=""))
-      write.csv(soil,paste(microdir,'shadsoil.csv',sep=""))
-      write.csv(humid,paste(microdir,'shadhumid.csv',sep=""))
-      write.csv(soilpot,paste(microdir,'shadpot.csv',sep=""))
-      write.csv(soilmoist,paste(microdir,'shadmoist.csv',sep=""))
-    }else{
-      write.csv(shadmet,paste(microdir,'shadmet.csv',sep=""))
-      write.csv(shadsoil,paste(microdir,'shadsoil.csv',sep=""))
-      write.csv(shadhumid,paste(microdir,'shadhumid.csv',sep=""))
-      write.csv(shadpot,paste(microdir,'shadpot.csv',sep=""))
-      write.csv(shadmoist,paste(microdir,'shadmoist.csv',sep=""))
-    }
-    write.csv(rainfall,paste(microdir,'rainfall.csv',sep=""))
-    write.csv(ectoin,paste(microdir,'ectoin.csv',sep=""))
-    write.csv(DEP,paste(microdir,'DEP.csv',sep=""))
-    write.csv(MAXSHADES,paste(microdir,'MAXSHADES.csv',sep=""))
-
-
-metout<-cbind(dates,metout)
-shadmet<-cbind(dates,shadmet)
-soil<-cbind(dates,soil)
-shadsoil<-cbind(dates,shadsoil)
-soilmoist<-cbind(dates,soilmoist)
-shadmoist<-cbind(dates,shadmoist)
-humid<-cbind(dates,humid)
-shadhumid<-cbind(dates,shadhumid)
-soilpot<-cbind(dates,soilpot)
-shadpot<-cbind(dates,shadpot)
-
-dates2<-seq(ISOdate(ystart,1,1,tz=tzone)-3600*12, ISOdate((ystart+nyears),1,1,tz=tzone)-3600*13, by="days") 
-dates2<-subset(dates2, format(dates2, "%m/%d")!= "02/29") # remove leap years
-rainfall<-as.data.frame(cbind(dates2,rainfall))
-colnames(rainfall)<-c('dates','rainfall')
-
-
-longlat<-nicheout$longlat
-
-dstart<-as.POSIXct(as.Date('01/01/2008', "%d/%m/%Y"))-3600*11
-dfinish<-as.POSIXct(as.Date('31/12/2009', "%d/%m/%Y"))-3600*10
+dstart<-as.POSIXct(as.Date('01/01/1911', "%d/%m/%Y"))-3600*11
+dfinish<-as.POSIXct(as.Date('31/12/1911', "%d/%m/%Y"))-3600*10
 plotsoilmoist<-subset(soilmoist,  soilmoist$dates > dstart & soilmoist$dates < dfinish )
 plothumid<-subset(humid,  humid$dates > dstart & humid$dates < dfinish )
 plotsoilpot<-subset(soilpot,  soilpot$dates > dstart & soilpot$dates < dfinish )

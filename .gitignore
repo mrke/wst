@@ -6,3 +6,6 @@ fort.6
 params.txt
 wet0D.R
 wet0D.dll
+microclimate_old
+make zoo temperature profiles2.R
+.gitignore

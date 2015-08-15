@@ -46,7 +46,7 @@ function [Prd_data, info] = predict_Pseudemydura_umbrina(par, chem, T_ref, data)
   % birth
   L_b = L_m * l_b;                  % cm, structural length at birth at f
   Lw_b = L_b/ del_M;                % cm, physical length at birth at f
-  Wd_b = L_b^3 * d_V * (1 + f * w); % g, dry weight at birth at f (remove d_V for wet weight)
+  Wd_b = L_b^3 * 0.5 * (1 + f * w); % g, dry weight at birth at f (remove d_V for wet weight)
   aT_b = t_b/ (k_M * s_M * 1.2) / TC_ab;           % d, age at birth at f and T (note s_M factor applied - egg in depression)
 
    pars_tp = [g ; k; l_T; v_Hb; v_Hp];               % compose parameter vector 
@@ -57,14 +57,15 @@ function [Prd_data, info] = predict_Pseudemydura_umbrina(par, chem, T_ref, data)
   Lw_p = L_p/ del_M;                % cm, physical length at puberty at f
   Wd_p = L_p^3 * d_V * (1 + f * w); % g, dry weight at puberty (remove d_V for wet weight)
   %aT_p = t_p/ TC_ap;           % d, age at puberty at f and T
-  years=100;
-  days=sort(repmat(1:182:364*years,1,2));
-  act=repmat([1 1 0 0 ],[1,years]);
-  tf=vertcat(days,act)'; % vector of hydroperiods/dry periods lasting 6 months
-  tR=1:365:years*365;
-  TC_f=0.4644;
-  TC_0=1.36442;
-  t=1:(365*years);                     % vector of days to simulate
+  % code to simulate growth under fluctuating temperature and food (pond duration)
+  years=100; % years to simulate
+  days=sort(repmat(1:182:364*years,1,2)); % set up pond durations of 182 days, and dry periods of the same length (one day short of year!)
+  act=repmat([1 1 0 0 ],[1,years]); % activity states
+  tf=vertcat(days,act)'; % vector of hydroperiods/dry periods lasting 182 days
+  tR=1:365:years*365; % intervals to get reproduction output
+  TC_f=0.2944; % temp correction factor when in water
+  TC_0=1.36442; % temp correction factor when on land
+  t=1:(365*years); % vector of days to simulate
   eLHR0 = [f; L_b; g * s_M * u_Hb/ l_b^3; 0]; % initial scaled reserve, length, scaled maturity density and reproduction buffer (birth)
   pars_UE0 = [V_Hb; g * s_M; k_J * s_M * 1.2; k_M * s_M * 1.2; v * s_M * 1.2]; U_E0 = initial_scaled_reserve(0.8, pars_UE0);
   [t eLHR] = ode45(@dget_eLHR, t, eLHR0, [], s_M, kap, u_Hp, k_J, v, g, L_m, f, TC_f, TC_0, tf); 
@@ -170,7 +171,7 @@ function [Prd_data, info] = predict_Pseudemydura_umbrina(par, chem, T_ref, data)
   O2M = (- n_M\n_O)'; % -, matrix that converts organic to mineral fluxes  O2M is prepared for post-multiplication eq. 4.35
 
   p_ref = p_Am * L_m^2;               % J/d, max assimilation power at max size
-  pars_power = [kap; kap_R; g; k_J; k_M; L_T; v; U_Hb; U_Hp];
+  pars_power = [kap; kap_R; g*s_MO2; k_J*s_MO2; k_M*s_MO2; L_T*s_MO2; v; U_Hb; U_Hp];
   X_gas = (0.082058*(20+273.15))/(0.082058*293.15)*24.06;  % gas correction factor
   
   % Mean of all turtles

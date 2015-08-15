@@ -1,25 +1,33 @@
 ############# ectotherm model parameters ################################
 
 microin<-"/git/wst/microclimate/Ellenbrook/" # subfolder containing the microclimate input data
+microin<-"none" # subfolder containing the microclimate input data
 
 # simulation settings
 mac<-0 # choose mac (1) or pc (0) 
 live<-1 # live (metabolism) or dead animal?
 enberr<-0.0002 # tolerance for energy balance
 timeinterval<-365 # number of time intervals in a year
+if(microin!="none"){
 ystart<-read.csv(paste(microin,'ectoin.csv',sep=""))[7,2]
 yfinish<-read.csv(paste(microin,'ectoin.csv',sep=""))[8,2]
-nyears<-ceiling(nrow(read.csv(paste(microin,'rainfall.csv',sep="")))/365) # number of years the simulation runs for (work out from input data)
-write_input<-0 # write input into 'csv input' folder? (1 yes, 0 no)
 longlat<-c(read.csv(paste(microin,'ectoin.csv',sep=""))[3,2],read.csv(paste(microin,'ectoin.csv',sep=""))[4,2])
+nyears<-ceiling(nrow(read.csv(paste(microin,'rainfall.csv',sep="")))/365) # number of years the simulation runs for (work out from input data)
+}else{
+ystart<-ectoin[7]
+yfinish<-ectoin[8]
+longlat<-c(ectoin[3],ectoin[4])
+nyears<-ceiling(nrow(RAINFALL)/365) # number of years the simulation runs for (work out from input data)
+}  
+write_input<-0 # write input into 'csv input' folder? (1 yes, 0 no)
 grasshade<-0 # use grass shade values from microclimate model as min shade values (1) or not (0)? (simulates effect of grass growth on shading, as a function of soil moisture)
 
 # habitat settings
 FLTYPE<-0.0  # fluid type 0.0=air, 1.0=water 
 SUBTK<-2.79 # substrate thermal conductivity (W/mC)
 soilnode<-4. # soil node at which eggs are laid (overridden if frogbreed is 1)
-minshade<-0. # minimum available shade (percent)
-maxshade<-40. # maximum available shade (percent)
+minshade<-60. # minimum available shade (percent)
+maxshade<-60. # maximum available shade (percent)
 REFL<-rep(0.20,timeinterval*nyears) # substrate reflectances 
 
 # morphological traits
@@ -109,6 +117,7 @@ wetmod<-1 # run the wetland model?
 soilmoisture<-0 # run the soil moisture model? (models near-surface soil moisture rather than a pond as a function of field capacity and wilting point)
 wet_thresh<-10*24 # threshold pond duration
 wet_depth<-100 # threshold pond depth (mm)
+wet_temp<-28 # threshold exit temp (deg C)
 
 # which energy budget model to use? 
 DEB<-1 # run the DEB model (1) or just heat balance, using allometric respiration below (0)
@@ -241,7 +250,7 @@ daylengthstart<- 12.5 # threshold daylength for initiating breeding
 daylengthfinish<- 13. # threshold daylength for terminating breeding
 photodirs <- 1 # is the start daylength trigger during a decrease (0) or increase (1) in day length?
 photodirf <- 0 # is the finish daylength trigger during a decrease (0) or increase (1) in day length?
-startday<-1 # make it 90 for T. rugosa loop day of year at which DEB model starts
+startday<-30*4.5 # make it 90 for T. rugosa loop day of year at which DEB model starts
 breedtempthresh<-200 # body temperature threshold below which breeding will occur
 breedtempcum<-24*7 # cumulative time below temperature threshold for breeding that will trigger breeding
 
@@ -271,10 +280,10 @@ v_init<-(debpars[25]^3)*fract^3 #hatchling
 E_init<-E_m
 E_H_init<-E_Hb+5
 stage<-1
-v_init<-(debpars[26]^3)*fract^3*0.85
-E_init<-E_m
-E_H_init<-E_Hp+1
-stage<-3
+# v_init<-(debpars[26]^3)*fract^3*0.85
+# E_init<-E_m
+# E_H_init<-E_Hp+1
+# stage<-3
 
 # mortality rates
 ma<-1e-4  # hourly active mortality rate (probability of mortality per hour)
@@ -285,7 +294,7 @@ ystrt<-0 # year to start the simulation (if zero, starts at first year, but if g
 #set up call to NicheMapR function
 maindir<-getwd()
 setwd('../ectotherm/')
-niche<-list(wet_depth=wet_depth,wet_thresh=wet_thresh,clutch_ab=clutch_ab,wilting=wilting,ystrt=ystrt,soilmoisture=soilmoisture,write_input=write_input,minshade=minshade,maxshade=maxshade,REFL=REFL,nyears=nyears,enberr=enberr,FLTYPE=FLTYPE,SUBTK=SUBTK,soilnode=soilnode,rinsul=rinsul,lometry=lometry,Flshcond=Flshcond,Spheat=Spheat,Andens=Andens,ABSMAX=ABSMAX,ABSMIN=ABSMIN,ptcond=ptcond,ctmax=ctmax,ctmin=ctmin,TMAXPR=TMAXPR,TMINPR=TMINPR,TPREF=TPREF,DELTAR=DELTAR,skinwet=skinwet,extref=extref,dayact=dayact,nocturn=nocturn,crepus=crepus,burrow=burrow,CkGrShad=CkGrShad,climb=climb,fosorial=fosorial,rainact=rainact,actrainthresh=actrainthresh,container=container,conth=conth,contw=contw,rainmult=rainmult,andens_deb=andens_deb,d_V=d_V,d_E=d_E,eggdryfrac=eggdryfrac,mu_X=mu_X,mu_E=mu_E,mu_V=mu_V,mu_P=mu_P,kappa_X_P=kappa_X_P,mu_X=mu_X,mu_E=mu_E,mu_V=mu_V,mu_P=mu_P,nX=nX,nE=nE,nV=nV,nP=nP,N_waste=N_waste,T_REF=T_REF,TA=TA,TAL=TAL,TAH=TAH,TL=TL,TH=TH,z=z,kappa=kappa,kappa_X=kappa_X,p_Mref=p_Mref,v_dotref=v_dotref,E_G=E_G,k_R=k_R,MsM=MsM,delta=delta,h_aref=h_aref,viviparous=viviparous,k_J=k_J,E_Hb=E_Hb,E_Hj=E_Hj,E_Hp=E_Hp,frogbreed=frogbreed,frogstage=frogstage,clutchsize=clutchsize,v_init=v_init,E_init=E_init,E_H_init=E_H_init,batch=batch,breedrainthresh=breedrainthresh,daylengthstart=daylengthstart,daylenghtfinish=daylengthfinish,photodirs=photodirs,photodirf=photodirf,photostart=photostart,photofinish=photofinish,amass=amass,customallom=customallom,E_Egg=E_Egg,PTUREA=PTUREA,PFEWAT=PFEWAT,FoodWater=FoodWater,DEB=DEB,MR_1=MR_1,MR_2=MR_2,MR_3=MR_3,EMISAN=EMISAN,FATOSK=FATOSK,FATOSB=FATOSB,f=f,minwater=minwater,s_G=s_G,K=K,X=X,flyer=flyer,flyspeed=flyspeed,maxdepth=maxdepth,mindepth=mindepth,ctminthresh=ctminthresh,ctkill=ctkill,metab_mode=metab_mode,stages=stages,arrhenius=arrhenius,startday=startday,raindrink=raindrink,reset=reset,gutfill=gutfill,TBASK=TBASK,TEMERGE=TEMERGE,p_Xm=p_Xm,flymetab=flymetab,live=live,continit=continit,wetmod=wetmod,thermal_stages=thermal_stages,behav_stages=behav_stages,water_stages=water_stages,stage=stage,ma=ma,mi=mi,mh=mh,aestivate=aestivate,depress=depress,contype=contype,rainmult=rainmult,conthole=conthole,contonly=contonly,contwet=contwet,microin=microin,mac=mac,grasshade=grasshade,y_EV_l=y_EV_l,S_instar=S_instar,s_j=s_j)
+niche<-list(wet_depth=wet_depth,wet_thresh=wet_thresh,wet_temp=wet_temp,clutch_ab=clutch_ab,wilting=wilting,ystrt=ystrt,soilmoisture=soilmoisture,write_input=write_input,minshade=minshade,maxshade=maxshade,REFL=REFL,nyears=nyears,enberr=enberr,FLTYPE=FLTYPE,SUBTK=SUBTK,soilnode=soilnode,rinsul=rinsul,lometry=lometry,Flshcond=Flshcond,Spheat=Spheat,Andens=Andens,ABSMAX=ABSMAX,ABSMIN=ABSMIN,ptcond=ptcond,ctmax=ctmax,ctmin=ctmin,TMAXPR=TMAXPR,TMINPR=TMINPR,TPREF=TPREF,DELTAR=DELTAR,skinwet=skinwet,extref=extref,dayact=dayact,nocturn=nocturn,crepus=crepus,burrow=burrow,CkGrShad=CkGrShad,climb=climb,fosorial=fosorial,rainact=rainact,actrainthresh=actrainthresh,container=container,conth=conth,contw=contw,rainmult=rainmult,andens_deb=andens_deb,d_V=d_V,d_E=d_E,eggdryfrac=eggdryfrac,mu_X=mu_X,mu_E=mu_E,mu_V=mu_V,mu_P=mu_P,kappa_X_P=kappa_X_P,mu_X=mu_X,mu_E=mu_E,mu_V=mu_V,mu_P=mu_P,nX=nX,nE=nE,nV=nV,nP=nP,N_waste=N_waste,T_REF=T_REF,TA=TA,TAL=TAL,TAH=TAH,TL=TL,TH=TH,z=z,kappa=kappa,kappa_X=kappa_X,p_Mref=p_Mref,v_dotref=v_dotref,E_G=E_G,k_R=k_R,MsM=MsM,delta=delta,h_aref=h_aref,viviparous=viviparous,k_J=k_J,E_Hb=E_Hb,E_Hj=E_Hj,E_Hp=E_Hp,frogbreed=frogbreed,frogstage=frogstage,clutchsize=clutchsize,v_init=v_init,E_init=E_init,E_H_init=E_H_init,batch=batch,breedrainthresh=breedrainthresh,daylengthstart=daylengthstart,daylenghtfinish=daylengthfinish,photodirs=photodirs,photodirf=photodirf,photostart=photostart,photofinish=photofinish,amass=amass,customallom=customallom,E_Egg=E_Egg,PTUREA=PTUREA,PFEWAT=PFEWAT,FoodWater=FoodWater,DEB=DEB,MR_1=MR_1,MR_2=MR_2,MR_3=MR_3,EMISAN=EMISAN,FATOSK=FATOSK,FATOSB=FATOSB,f=f,minwater=minwater,s_G=s_G,K=K,X=X,flyer=flyer,flyspeed=flyspeed,maxdepth=maxdepth,mindepth=mindepth,ctminthresh=ctminthresh,ctkill=ctkill,metab_mode=metab_mode,stages=stages,arrhenius=arrhenius,startday=startday,raindrink=raindrink,reset=reset,gutfill=gutfill,TBASK=TBASK,TEMERGE=TEMERGE,p_Xm=p_Xm,flymetab=flymetab,live=live,continit=continit,wetmod=wetmod,thermal_stages=thermal_stages,behav_stages=behav_stages,water_stages=water_stages,stage=stage,ma=ma,mi=mi,mh=mh,aestivate=aestivate,depress=depress,contype=contype,rainmult=rainmult,conthole=conthole,contonly=contonly,contwet=contwet,microin=microin,mac=mac,grasshade=grasshade,y_EV_l=y_EV_l,S_instar=S_instar,s_j=s_j)
 source('NicheMapR_Setup_ecto.R')
 nicheout<-NicheMapR_ecto(niche)
 setwd(maindir)
@@ -338,77 +347,36 @@ colnames(rainfall)<-c("dates","rainfall")
 
 ############### plot results ######################
 library(lattice)
-#write.csv(environ,'environ_dam.csv')
-#write.csv(debout,'debout_dam.csv')
 
-#environ<-read.csv('environ_75gut.csv')[,-1]
-#debout<-read.csv('debout_75gut.csv')[,-1]
-#setwd('/NicheMapR_Working/projects/Sleepy Lizards/')
-# environ_write<-cbind(environ,debout[,6:21])
-# if(raindrink==0){
-#   write.csv(environ_write,'environ_drink.csv')
-# }else{
-#   write.csv(environ_write,'environ_nodrink.csv')
-# }
-
-
-plotrainfall <- subset(rainfall,format(dates, "%y")>0)
-#with(plotrainfall,plot(rainfall~dates,type='l',col='blue'))
-
-plotmetout2<-subset(metout,format(metout$dates, "%y")>0)
-
-
-plotenviron<-as.data.frame(environ)
-plotenviron2 <-subset(plotenviron, format(plotenviron$dates, "%y")>0)
-plotmasbal <-subset(masbal, format(masbal$dates, "%y")>0)
-
-
-plotenviron_night<-subset(metout,ZEN==90)
-plotenviron_night$TIME<-plotenviron_night$TIME/60-1
-plotenviron_night$JULDAY<-plotenviron_night$JULDAY+(as.numeric(format(plotenviron_night$dates, '%Y'))-2009)*365
-plotenviron_bask <- subset(plotenviron2,  subset=(ACT>=1 & TC>=TMINPR))
-plotenviron_forage <- subset(plotenviron2,  subset=(ACT>1))
-plotenviron_trap <- subset(plotenviron2,  subset=(ACT>=1 & SHADE==0 & TC>=TMINPR))
-
-
-addTrans <- function(color,trans)
-{
-  # This function adds transparancy to a color.
-  # Define transparancy with an integer between 0 and 255
-  # 0 being fully transparant and 255 being fully visable
-  # Works with either color and trans a vector of equal length,
-  # or one of the two of length 1.
-  
-  if (length(color)!=length(trans)&!any(c(length(color),length(trans))==1)) stop("Vector lengths not correct")
-  if (length(color)==1 & length(trans)>1) color <- rep(color,length(trans))
-  if (length(trans)==1 & length(color)>1) trans <- rep(trans,length(color))
-  
-  num2hex <- function(x)
-  {
-    hex <- unlist(strsplit("0123456789ABCDEF",split=""))
-    return(paste(hex[(x-x%%16)/16+1],hex[x%%16+1],sep=""))
-  }
-  rgb <- rbind(col2rgb(color),trans)
-  res <- paste("#",apply(apply(rgb,2,num2hex),2,paste,collapse=""),sep="")
-  return(res)
-}
-
-#with(debout, {points(WETMASS~dates,type = "l",ylab = "wet mass (g)/grass",ylim=c(0,1300),col='grey')})
-#points(grassgrowths*100~dates2,type='l',col='green')
-#points(rainfall$rainfall*10~dates2,type='h',col='blue')
-
+# load wild growth data
 ref<-read.csv('growth data/Recaptured Wild WST Ref Sheet.csv')
 ENBR<-read.csv('growth data/Recaptured Wild WST ENBR.csv',stringsAsFactors=FALSE)
 colnames(ENBR)<-c("ID","Date","Mass","Length","Loc")
 ENBR$Date<-as.POSIXct(ENBR$Date,format="%d/%m/%Y")
 ENBR_LW<-read.csv('growth data/ENBR_LW.csv')
-
-with(ENBR_LW,plot(Mass~Length))
-points(debout$WETMASS~debout$SVL,col='red')
-
-
 agg<-aggregate(ENBR$Mass,by=list(ENBR$ID),FUN=length)
 IDs<-agg[order(-agg$x),1]
+
+par(mfrow = c(2,1))
+# plot predicted growth against observed for a given turtle
+with(debout, {plot(WETMASS~dates,type = "l",xlab = "day of year",ylab = "wet mass (g)",col='blue',ylim=c(0,400))})
+with(environ, points(CONDEP/10~dates,type='l'))
+#turtle<-182 # use 80% shade
+#turtle<-144 # use 80% shade
+#turtle<-341 # use 70% shade
+turtle<-196 # use 70% shade
+turtle<-592 # use 70% shade
+data<-subset(ENBR,ID==turtle) # 144,341,380,387,196,4,256
+with(data,points(Mass~Date,col='red'))
+title(main=paste("turtle #",turtle,sep=""))
+
+# plot predicted length
+with(debout, {plot(SVL~dates,type = "l",xlab = "day of year",ylab = "carapace length (mm)",col='blue',ylim=c(0,140))})
+with(environ, points(CONDEP/10~dates,type='l'))
+with(data,points(Length~Date,col='red',main=turtle))
+title(main=paste("turtle #",turtle,sep=""))
+
+# plot the 20 most detailed data sets
 #par(mfrow = c(2,1)) # set up for 2 plots in 1 column
 for(i in 1:20){
   data<-subset(ENBR,ID==IDs[i])
@@ -418,19 +386,25 @@ for(i in 1:20){
   }
 }
 
+# plot length weight relationship observed and predicted
+with(ENBR_LW,plot(Mass~Length))
+points(debout$WETMASS~debout$SVL,col='red')
 
-with(debout, {plot(WETMASS~dates,type = "l",xlab = "day of year",ylab = "wet mass (g)",col='blue',ylim=c(0,400))})
-with(environ, points(CONDEP/10~dates,type='l'))
-data<-subset(ENBR,ID==256) # 341,380,387,196,4,256
-with(data,points(Mass~Date,col='red',main=IDs[i]))
+# "Mitchell" plot of activity window
+environ_night<-subset(metout,ZEN==90)
+environ_night$TIME<-environ_night$TIME/60-1
+environ_night$JULDAY<-environ_night$JULDAY+(as.numeric(format(environ_night$dates, '%Y'))-2009)*365
+environ_bask <- subset(environ,  subset=(ACT>=1 & TC>=TMINPR))
+environ_forage <- subset(environ,  subset=(ACT>1))
+doy2<-strptime(format(plotrainfall$dates, "%y/%m/%d"), "%y/%m/%d")$yday+1
+rainfall2<-cbind(doy2rainfall)
+
+with(environ_night, {points(TIME+2~JULDAY, xlim=c(startdy,finishdy),ylim=c(0,25),xlab = "day of year",ylab = "hour of day",cex=0.5,col="dark grey",pch=16)})
+with(environ_bask, {points(TIME~JULDAY, xlim=c(startdy,finishdy),ylim=c(0,25),xlab = "day of year",ylab = "hour of day",cex=1.,col="light blue",pch=15)})
+with(environ_forage, {points(TIME~JULDAY, xlim=c(startdy,finishdy),ylim=c(0,25),xlab = "day of year",ylab = "hour of day",cex=1.,col="gold",pch=15)})
+with(plotrainfall, {points(RAINFALL~JULDAY, type = "h",col='blue')})
+    
 
 
-with(debout, {plot(SVL~dates,type = "l",xlab = "day of year",ylab = "wet mass (g)",col='blue')})
-with(environ, points(CONDEP/10~dates,type='l'))
-
+# plot activity, temperature, shade and depth in one chart
 with(environ, {xyplot(TC+ACT*5+SHADE/10+DEP/10~dates,type = "l")})
-
-# write.csv(metout,'/NicheMapR_Working/projects/sleepy_ibm_transient/metout.csv')
-# write.csv(soil,'/NicheMapR_Working/projects/sleepy_ibm_transient/soil.csv')
-# write.csv(shadmet,'/NicheMapR_Working/projects/sleepy_ibm_transient/shadmet.csv')
-# write.csv(shadsoil,'/NicheMapR_Working/projects/sleepy_ibm_transient/shadsoil.csv')

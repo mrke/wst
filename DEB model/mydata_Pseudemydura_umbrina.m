@@ -332,14 +332,14 @@ weight = setweights(data, []);
 % zero-variate data:
 % weight.Wdi = 100 * weight.Wdi; % Much more confidence in the ultimate dry
 %                                % weight than the other data points
- weight.Ri = 50*weight.Ri;
+ %weight.Ri = 50*weight.Ri;
  weight.Wdb = 20*weight.Wdb;
 %weight.Wdp = 10*weight.Wdp;
-%weight.Wdi = 100*weight.Wdi;
+ weight.Wdi = 20*weight.Wdi;
  %weight.ap = 50*weight.ap;
- weight.ab = 50*weight.ab;
- %weight.Li = 50*weight.Li;
-
+ weight.ab = 20*weight.ab;
+ weight.Li = 20*weight.Li;
+ weight.Li = 20*weight.Lb;
 
 % uni-variate data: 
 % weight.TO = 50 * weight.TO;
