@@ -23,10 +23,7 @@
 # rgdal
 # zoo
 # RODBC
-ystarts<- c(1911,1925,1934,1952,1970,1988,2006)
-yfinishs<-c(1926,1935,1953,1971,1989,2007,2014)
 
-for(kk in 1:length(ystarts)){
 spatial<-"c:/Australian Environment/" # place where climate input files are kept
 
 ############## location and climatic data  ###################################
@@ -39,8 +36,8 @@ dailywind<-1 # use daily windspeed database?
 terrain<-0 # include terrain (slope, aspect, horizon angles) (1) or not (0)?
 soildata<-0 # include soil data for Australia (1) or not (0)?
 snowmodel<-0 # run snow version? (slower!)
-ystart <- ystarts[kk]# start year for weather generator calibration dataset or AWAP database
-yfinish <- yfinishs[kk]# end year for weather generator calibration dataset
+ystart <- 1911# start year for weather generator calibration dataset or AWAP database
+yfinish <- 2014# end year for weather generator calibration dataset
 nyears<-yfinish-ystart+1# integer, number of years for which to run the microclimate model, only for AWAP data (!!max 10 years!!)
 
 # 
@@ -62,7 +59,7 @@ nyears<-yfinish-ystart+1# integer, number of years for which to run the microcli
 DEP <- c(0.,2.,  5.,  10,  15,  20.,  30.,  60.,  90.,  200.) # Soil nodes (cm) - keep spacing close near the surface, last value is where it is assumed that the soil temperature is at the annual mean air temperature
 
 
-soilpro<-read.csv("c:/git/ectotherm/sleepy/soilprops.txt",header=FALSE)
+soilpro<-read.csv("c:/git/Tiliqua_rugosa/microclimate/soilprops.txt",header=FALSE)
 colnames(soilpro)<-c('i','site','long','lat','desc','blkdens','clay','silt','sand')
 soilpro<-subset(soilpro,site==1)
 soilpro<-soilpro[,5:9]
@@ -237,33 +234,31 @@ BB[10:13]<-CampNormTbl9_1[4,5] #soil 'b' parameter
   setwd(maindir)
   
   if(i==1){
-    metout<-as.data.frame(nicheout$metout[1:(365*24*nyears),]) # above ground microclimatic conditions, min shade
-    soil<-as.data.frame(nicheout$soil[1:(365*24*nyears),]) # soil temperatures, minimum shade
+    dim<-nicheout$dim
+    metout<-as.data.frame(nicheout$metout[1:(dim*24),]) # above ground microclimatic conditions, min shade
+    soil<-as.data.frame(nicheout$soil[1:(dim*24),]) # soil temperatures, minimum shade
     write.csv(soil[,6],paste(microdir,'wetlandTemps',ystart,'_',yfinish,'.csv',sep=""))
     write.csv(metout[,10],paste(microdir,'wetlandDepths',ystart,'_',yfinish,'.csv',sep=""))
     
   }else{
     # get output
-    ndays<-nicheout$ndays
-    ndays<-365
-    metout<-as.data.frame(nicheout$metout[1:(ndays*24*nyears),]) # above ground microclimatic conditions, min shade
-    shadmet<-as.data.frame(nicheout$shadmet[1:(ndays*24*nyears),]) # above ground microclimatic conditions, max shade
-    soil<-as.data.frame(nicheout$soil[1:(ndays*24*nyears),]) # soil temperatures, minimum shade
-    shadsoil<-as.data.frame(nicheout$shadsoil[1:(ndays*24*nyears),]) # soil temperatures, maximum shade
-    soilmoist<-as.data.frame(nicheout$soilmoist[1:(ndays*24*nyears),]) # soil water content, minimum shade
-    shadmoist<-as.data.frame(nicheout$shadmoist[1:(ndays*24*nyears),]) # soil water content, maximum shade
-    humid<-as.data.frame(nicheout$humid[1:(ndays*24*nyears),]) # soil humidity, minimum shade
-    shadhumid<-as.data.frame(nicheout$shadhumid[1:(ndays*24*nyears),]) # soil humidity, maximum shade
-    soilpot<-as.data.frame(nicheout$soilpot[1:(ndays*24*nyears),]) # soil water potential, minimum shade
-    shadpot<-as.data.frame(nicheout$shadpot[1:(ndays*24*nyears),]) # soil water potential, maximum shade
+    dim<-nicheout$dim
+    metout<-as.data.frame(nicheout$metout[1:(dim*24),]) # above ground microclimatic conditions, min shade
+    shadmet<-as.data.frame(nicheout$shadmet[1:(dim*24),]) # above ground microclimatic conditions, max shade
+    soil<-as.data.frame(nicheout$soil[1:(dim*24),]) # soil temperatures, minimum shade
+    shadsoil<-as.data.frame(nicheout$shadsoil[1:(dim*24),]) # soil temperatures, maximum shade
+    soilmoist<-as.data.frame(nicheout$soilmoist[1:(dim*24),]) # soil water content, minimum shade
+    shadmoist<-as.data.frame(nicheout$shadmoist[1:(dim*24),]) # soil water content, maximum shade
+    humid<-as.data.frame(nicheout$humid[1:(dim*24),]) # soil humidity, minimum shade
+    shadhumid<-as.data.frame(nicheout$shadhumid[1:(dim*24),]) # soil humidity, maximum shade
+    soilpot<-as.data.frame(nicheout$soilpot[1:(dim*24),]) # soil water potential, minimum shade
+    shadpot<-as.data.frame(nicheout$shadpot[1:(dim*24),]) # soil water potential, maximum shade
     rainfall<-as.data.frame(nicheout$RAINFALL)
     MAXSHADES<-as.data.frame(nicheout$MAXSHADES)
     elev<-as.numeric(nicheout$ALTT)
     REFL<-as.numeric(nicheout$REFL)
     longlat<-as.matrix(nicheout$longlat)
-    fieldcap<-as.numeric(nicheout$fieldcap)
-    wilting<-as.numeric(nicheout$wilting)
-    ectoin<-c(elev,REFL,longlat,fieldcap,wilting,ystart,yfinish)
+    ectoin<-rbind(elev,REFL,longlat,0,0,1990,1990+nyears-1)
     
     
     write.csv(metout,paste(microdir,'metout',ystart,'_',yfinish,'.csv',sep=""))
@@ -290,371 +285,7 @@ BB[10:13]<-CampNormTbl9_1[4,5] #soil 'b' parameter
     write.csv(MAXSHADES,paste(microdir,'MAXSHADES',ystart,'_',yfinish,'.csv',sep=""))
   }
 }
-}
 
-
-ystart<-1911
-yfinish<-2014
-ectoin<-c(elev,REFL,longlat,fieldcap,wilting,ystart,yfinish)
-if(!require(geonames)){
-  stop('package "geonames" is required.')
-}
-tzone<-paste("Etc/GMT-10",sep="") # doing it this way ignores daylight savings!
-
-dates<-seq(ISOdate(1911,1,1,tz=tzone)-3600*12, ISOdate((2015),1,1,tz=tzone)-3600*13, by="hours") 
-dates<-subset(dates, format(dates, "%m/%d")!= "02/29") # remove leap years
-dates<-subset(dates, !duplicated(as.matrix(dates[2110:2120])))
-dates<-unique(dates)
-dates2<-seq(ISOdate(1911,1,1,tz=tzone)-3600*12, ISOdate(2015,1,1,tz=tzone)-3600*13, by="days") 
-dates2<-subset(dates2, format(dates2, "%m/%d")!= "02/29") # remove leap years
-
-for(i in 1:length(ystarts)){
-    wetlandTemps<-as.data.frame(read.csv(paste(microdir,'wetlandTemps',ystarts[i],'_',yfinishs[i],'.csv',sep=""))[-1])
-    if(i>1){
-      wetlandTemps<-as.data.frame(wetlandTemps[(365*24*2+1):nrow(wetlandTemps),])
-    }
-  colnames(wetlandTemps)<-'x'
-  if(i==1){
-    wetlandTempsAll<-wetlandTemps
-  }else{
-    wetlandTempsAll<-rbind(wetlandTempsAll, wetlandTemps)
-  }
-}
-write.csv(wetlandTempsAll,paste(microdir,'wetlandTemps',ystart,'_',yfinish,'.csv',sep=""))
-wetlandTempsAll<-cbind(dates,wetlandTempsAll)
-
-
-for(i in 1:length(ystarts)){
-    wetlandDepths<-as.data.frame(read.csv(paste(microdir,'wetlandDepths',ystarts[i],'_',yfinishs[i],'.csv',sep=""))[-1])
-    if(i>1){
-      wetlandDepths<-as.data.frame(wetlandDepths[(365*24*2+1):nrow(wetlandDepths),])
-    }
-  colnames(wetlandDepths)<-'x'
-  if(i==1){
-    wetlandDepthsAll<-wetlandDepths
-  }else{
-    wetlandDepthsAll<-rbind(wetlandDepthsAll, wetlandDepths)
-  }
-}
-write.csv(wetlandDepthsAll,paste(microdir,'wetlandDepths',ystart,'_',yfinish,'.csv',sep=""))
-wetlandDepthsAll<-cbind(dates,wetlandDepthsAll)
-plot(wetlandDepthsAll$x~wetlandDepthsAll$dates,type='l')
-
-for(i in 1:length(ystarts)){
-    metout<-as.data.frame(read.csv(paste(microdir,'metout',ystarts[i],'_',yfinishs[i],'.csv',sep=""))[-1])
-    if(i>1){
-      metout<-as.data.frame(metout[(365*24*2+1):nrow(metout),])
-    }
-  colnames(metout)<-'x'
-  if(i==1){
-    metoutAll<-metout
-  }else{
-    metoutAll<-rbind(metoutAll, metout)
-  }
-}
-write.csv(metoutAll,paste(microdir,'metout',ystart,'_',yfinish,'.csv',sep=""))
-metoutAll<-cbind(dates,metoutAll)
-#plot(metoutAll[,4]~metoutAll$dates,type='l')
-
-for(i in 1:length(ystarts)){
-    shadmet<-as.data.frame(read.csv(paste(microdir,'shadmet',ystarts[i],'_',yfinishs[i],'.csv',sep=""))[-1])
-    if(i>1){
-      shadmet<-as.data.frame(shadmet[(365*24*2+1):nrow(shadmet),])
-    }
-  colnames(shadmet)<-'x'
-  if(i==1){
-    shadmetAll<-shadmet
-  }else{
-    shadmetAll<-rbind(shadmetAll, shadmet)
-  }
-}
-write.csv(shadmetAll,paste(microdir,'shadmet',ystart,'_',yfinish,'.csv',sep=""))
-shadmetAll<-cbind(dates,shadmetAll)
-#plot(shadmetAll[,4]~shadmetAll$dates,type='l')
-
-for(i in 1:length(ystarts)){
-    soil<-as.data.frame(read.csv(paste(microdir,'soil',ystarts[i],'_',yfinishs[i],'.csv',sep=""))[-1])
-    if(i>1){
-      soil<-as.data.frame(soil[(365*24*2+1):nrow(soil),])
-    }
-  colnames(soil)<-'x'
-  if(i==1){
-    soilAll<-soil
-  }else{
-    soilAll<-rbind(soilAll, soil)
-  }
-}
-write.csv(soilAll,paste(microdir,'soil',ystart,'_',yfinish,'.csv',sep=""))
-soilAll<-cbind(dates,soilAll)
-#plot(soilAll[,4]~soilAll$dates,type='l')
-
-for(i in 1:length(ystarts)){
-    shadsoil<-as.data.frame(read.csv(paste(microdir,'shadsoil',ystarts[i],'_',yfinishs[i],'.csv',sep=""))[-1])
-    if(i>1){
-      shadsoil<-as.data.frame(shadsoil[(365*24*2+1):nrow(shadsoil),])
-    }
-  colnames(shadsoil)<-'x'
-  if(i==1){
-    shadsoilAll<-shadsoil
-  }else{
-    shadsoilAll<-rbind(shadsoilAll, shadsoil)
-  }
-}
-write.csv(shadsoilAll,paste(microdir,'shadsoil',ystart,'_',yfinish,'.csv',sep=""))
-shadsoilAll<-cbind(dates,shadsoilAll)
-#plot(shadsoilAll[,4]~shadsoilAll$dates,type='l')
-
-for(i in 1:length(ystarts)){
-    soilmoist<-as.data.frame(read.csv(paste(microdir,'soilmoist',ystarts[i],'_',yfinishs[i],'.csv',sep=""))[-1])
-    if(i>1){
-      soilmoist<-as.data.frame(soilmoist[(365*24*2+1):nrow(soilmoist),])
-    }
-  colnames(soilmoist)<-'x'
-  if(i==1){
-    soilmoistAll<-soilmoist
-  }else{
-    soilmoistAll<-rbind(soilmoistAll, soilmoist)
-  }
-}
-write.csv(soilmoistAll,paste(microdir,'soilmoist',ystart,'_',yfinish,'.csv',sep=""))
-soilmoistAll<-cbind(dates,soilmoistAll)
-#plot(soilmoistAll[,4]~soilmoistAll$dates,type='l')
-
-for(i in 1:length(ystarts)){
-    shadmoist<-as.data.frame(read.csv(paste(microdir,'shadmoist',ystarts[i],'_',yfinishs[i],'.csv',sep=""))[-1])
-    if(i>1){
-      shadmoist<-as.data.frame(shadmoist[(365*24*2+1):nrow(shadmoist),])
-    }
-  colnames(shadmoist)<-'x'
-  if(i==1){
-    shadmoistAll<-shadmoist
-  }else{
-    shadmoistAll<-rbind(shadmoistAll, shadmoist)
-  }
-}
-write.csv(shadmoistAll,paste(microdir,'shadmoist',ystart,'_',yfinish,'.csv',sep=""))
-shadmoistAll<-cbind(dates,shadmoistAll)
-#plot(shadmoistAll[,4]~shadmoistAll$dates,type='l')
-
-for(i in 1:length(ystarts)){
-    humid<-as.data.frame(read.csv(paste(microdir,'humid',ystarts[i],'_',yfinishs[i],'.csv',sep=""))[-1])
-    if(i>1){
-      humid<-as.data.frame(humid[(365*24*2+1):nrow(humid),])
-    }
-  colnames(humid)<-'x'
-  if(i==1){
-    humidAll<-humid
-  }else{
-    humidAll<-rbind(humidAll, humid)
-  }
-}
-write.csv(humidAll,paste(microdir,'humid',ystart,'_',yfinish,'.csv',sep=""))
-humidAll<-cbind(dates,humidAll)
-#plot(humidAll[,4]~humidAll$dates,type='l')
-
-for(i in 1:length(ystarts)){
-    shadhumid<-as.data.frame(read.csv(paste(microdir,'shadhumid',ystarts[i],'_',yfinishs[i],'.csv',sep=""))[-1])
-    if(i>1){
-      shadhumid<-as.data.frame(shadhumid[(365*24*2+1):nrow(shadhumid),])
-    }
-  colnames(shadhumid)<-'x'
-  if(i==1){
-    shadhumidAll<-shadhumid
-  }else{
-    shadhumidAll<-rbind(shadhumidAll, shadhumid)
-  }
-}
-write.csv(shadhumidAll,paste(microdir,'shadhumid',ystart,'_',yfinish,'.csv',sep=""))
-shadhumidAll<-cbind(dates,shadhumidAll)
-#plot(shadhumidAll[,4]~shadhumidAll$dates,type='l')
-
-for(i in 1:length(ystarts)){
-    soilpot<-as.data.frame(read.csv(paste(microdir,'soilpot',ystarts[i],'_',yfinishs[i],'.csv',sep=""))[-1])
-    if(i>1){
-      soilpot<-as.data.frame(soilpot[(365*24*2+1):nrow(soilpot),])
-    }
-  colnames(soilpot)<-'x'
-  if(i==1){
-    soilpotAll<-soilpot
-  }else{
-    soilpotAll<-rbind(soilpotAll, soilpot)
-  }
-}
-write.csv(soilpotAll,paste(microdir,'soilpot',ystart,'_',yfinish,'.csv',sep=""))
-soilpotAll<-cbind(dates,soilpotAll)
-#plot(soilpotAll[,4]~soilpotAll$dates,type='l')
-
-for(i in 1:length(ystarts)){
-    shadpot<-as.data.frame(read.csv(paste(microdir,'shadpot',ystarts[i],'_',yfinishs[i],'.csv',sep=""))[-1])
-    if(i>1){
-      shadpot<-as.data.frame(shadpot[(365*24*2+1):nrow(shadpot),])
-    }
-  colnames(shadpot)<-'x'
-  if(i==1){
-    shadpotAll<-shadpot
-  }else{
-    shadpotAll<-rbind(shadpotAll, shadpot)
-  }
-}
-write.csv(shadpotAll,paste(microdir,'shadpot',ystart,'_',yfinish,'.csv',sep=""))
-shadpotAll<-cbind(dates,shadpotAll)
-#plot(shadpotAll[,4]~shadpotAll$dates,type='l')
-
-for(i in 1:length(ystarts)){
-    rainfall<-as.data.frame(read.csv(paste(microdir,'rainfall',ystarts[i],'_',yfinishs[i],'.csv',sep=""))[-1])
-    if(i>1){
-      rainfall<-as.data.frame(rainfall[(365*2+1):nrow(rainfall),])
-    }
-  colnames(rainfall)<-'x'
-  if(i==1){
-    rainfallAll<-rainfall
-  }else{
-    rainfallAll<-rbind(rainfallAll, rainfall)
-  }
-}
-write.csv(rainfallAll,paste(microdir,'rainfall',ystart,'_',yfinish,'.csv',sep=""))
-rainfallAll<-cbind(dates2,rainfallAll)
-plot(rainfallAll$x~rainfallAll$dates,type='l')
-
-
-dstart<-as.POSIXct(as.Date('01/01/1911', "%d/%m/%Y"))-3600*11
-dfinish<-as.POSIXct(as.Date('31/12/1911', "%d/%m/%Y"))-3600*10
-plotsoilmoist<-subset(soilmoist,  soilmoist$dates > dstart & soilmoist$dates < dfinish )
-plothumid<-subset(humid,  humid$dates > dstart & humid$dates < dfinish )
-plotsoilpot<-subset(soilpot,  soilpot$dates > dstart & soilpot$dates < dfinish )
-plotsoil<-subset(soil,  soil$dates > dstart & soil$dates < dfinish )
-plotmetout<-subset(metout,  metout$dates > dstart & metout$dates < dfinish )
-
-plot(plotsoilmoist$dates, plotsoilmoist[,4]*100,type='l',col = "red",lty=1,ylim = c(0,50),main=CampNormTbl9_1[soiltype,1],ylab='moisture (% vol)',xlab='date')
-points(plotsoilmoist$dates, plotsoilmoist[,5]*100,type='l',col = 3,lty=1,ylim = c(0,50),main=CampNormTbl9_1[soiltype,1],ylab='moisture (% vol)',xlab='date')
-points(plotsoilmoist$dates, plotsoilmoist[,6]*100,type='l',col = 4,lty=1,ylim = c(0,50),main=CampNormTbl9_1[soiltype,1],ylab='moisture (% vol)',xlab='date')
-points(plotsoilmoist$dates, plotsoilmoist[,7]*100,type='l',col = 5,lty=1,ylim = c(0,50),main=CampNormTbl9_1[soiltype,1],ylab='moisture (% vol)',xlab='date')
-points(plotsoilmoist$dates, plotsoilmoist[,8]*100,type='l',col = 6,lty=1,ylim = c(0,50),main=CampNormTbl9_1[soiltype,1],ylab='moisture (% vol)',xlab='date')
-points(plotsoilmoist$dates, plotsoilmoist[,9]*100,type='l',col = 7,lty=1,ylim = c(0,50),main=CampNormTbl9_1[soiltype,1],ylab='moisture (% vol)',xlab='date')
-points(plotsoilmoist$dates, plotsoilmoist[,10]*100,type='l',col = 8,lty=1,ylim = c(0,50),main=CampNormTbl9_1[soiltype,1],ylab='moisture (% vol)',xlab='date')
-points(plotsoilmoist$dates, plotsoilmoist[,11]*100,type='l',col = 9,lty=1,ylim = c(0,50),main=CampNormTbl9_1[soiltype,1],ylab='moisture (% vol)',xlab='date')
-points(plotsoilmoist$dates, plotsoilmoist[,12]*100,type='l',col = 10,lty=1,ylim = c(0,50),main=CampNormTbl9_1[soiltype,1],ylab='moisture (% vol)',xlab='date')
-points(plotsoilmoist$dates, plotsoilmoist[,13]*100,type='l',col = 11,lty=1,ylim = c(0,50),main=CampNormTbl9_1[soiltype,1],ylab='moisture (% vol)',xlab='date')
-#points(rainfall$rainfall~rainfall$dates,type='h',col='dark blue')
-
-plot(plothumid$dates, plothumid[,4]*100,type='l',col = "red",lty=1,ylim = c(0,100),main=CampNormTbl9_1[soiltype,1],ylab='relative humdity (%)',xlab='date')
-points(plothumid$dates, plothumid[,5]*100,type='l',col = 3,lty=1,ylim = c(0,50),main=CampNormTbl9_1[soiltype,1],ylab='relative humdity (%)',xlab='date')
-points(plothumid$dates, plothumid[,6]*100,type='l',col = 4,lty=1,ylim = c(0,50),main=CampNormTbl9_1[soiltype,1],ylab='relative humdity (%)',xlab='date')
-points(plothumid$dates, plothumid[,7]*100,type='l',col = 5,lty=1,ylim = c(0,50),main=CampNormTbl9_1[soiltype,1],ylab='relative humdity (%)',xlab='date')
-points(plothumid$dates, plothumid[,8]*100,type='l',col = 6,lty=1,ylim = c(0,50),main=CampNormTbl9_1[soiltype,1],ylab='relative humdity (%)',xlab='date')
-points(plothumid$dates, plothumid[,9]*100,type='l',col = 7,lty=1,ylim = c(0,50),main=CampNormTbl9_1[soiltype,1],ylab='relative humdity (%)',xlab='date')
-points(plothumid$dates, plothumid[,10]*100,type='l',col = 8,lty=1,ylim = c(0,50),main=CampNormTbl9_1[soiltype,1],ylab='relative humdity (%)',xlab='date')
-points(plothumid$dates, plothumid[,11]*100,type='l',col = 9,lty=1,ylim = c(0,50),main=CampNormTbl9_1[soiltype,1],ylab='relative humdity (%)',xlab='date')
-points(plothumid$dates, plothumid[,12]*100,type='l',col = 10,lty=1,ylim = c(0,50),main=CampNormTbl9_1[soiltype,1],ylab='relative humdity (%)',xlab='date')
-points(plothumid$dates, plothumid[,13]*100,type='l',col = 11,lty=1,ylim = c(0,50),main=CampNormTbl9_1[soiltype,1],ylab='relative humdity (%)',xlab='date')
-
-plot(plotsoilpot$dates, plotsoilpot[,4],type='l',col = "red",lty=1,ylim = c(-5000,0),main=CampNormTbl9_1[soiltype,1],ylab='water potential (J/kg)',xlab='date')
-points(plotsoilpot$dates, plotsoilpot[,5],type='l',col = 3,lty=1,ylim = c(-300,0),main=CampNormTbl9_1[soiltype,1],ylab='water potential (J/kg)',xlab='date')
-points(plotsoilpot$dates, plotsoilpot[,6],type='l',col = 4,lty=1,ylim = c(0,50),main=CampNormTbl9_1[soiltype,1],ylab='relative humdity (%)',xlab='date')
-points(plotsoilpot$dates, plotsoilpot[,7],type='l',col = 5,lty=1,ylim = c(0,50),main=CampNormTbl9_1[soiltype,1],ylab='relative humdity (%)',xlab='date')
-points(plotsoilpot$dates, plotsoilpot[,8],type='l',col = 6,lty=1,ylim = c(0,50),main=CampNormTbl9_1[soiltype,1],ylab='relative humdity (%)',xlab='date')
-points(plotsoilpot$dates, plotsoilpot[,9],type='l',col = 7,lty=1,ylim = c(0,50),main=CampNormTbl9_1[soiltype,1],ylab='relative humdity (%)',xlab='date')
-points(plotsoilpot$dates, plotsoilpot[,10],type='l',col = 8,lty=1,ylim = c(0,50),main=CampNormTbl9_1[soiltype,1],ylab='relative humdity (%)',xlab='date')
-points(plotsoilpot$dates, plotsoilpot[,11],type='l',col = 9,lty=1,ylim = c(0,50),main=CampNormTbl9_1[soiltype,1],ylab='relative humdity (%)',xlab='date')
-points(plotsoilpot$dates, plotsoilpot[,12],type='l',col = 10,lty=1,ylim = c(0,50),main=CampNormTbl9_1[soiltype,1],ylab='relative humdity (%)',xlab='date')
-points(plotsoilpot$dates, plotsoilpot[,13],type='l',col = 11,lty=1,ylim = c(0,50),main=CampNormTbl9_1[soiltype,1],ylab='relative humdity (%)',xlab='date')
-
-plot(plotsoil$dates, plotsoil[,4],type='l',col = "red",lty=1,ylim = c(-10,80),main=CampNormTbl9_1[soiltype,1],ylab='temperature (C)',xlab='date')
-points(plotsoil$dates, plotsoil[,5],type='l',col = 3,lty=1,ylim = c(0,50),main=CampNormTbl9_1[soiltype,1],ylab='relative humdity (%)',xlab='date')
-points(plotsoil$dates, plotsoil[,6],type='l',col = 4,lty=1,ylim = c(0,50),main=CampNormTbl9_1[soiltype,1],ylab='relative humdity (%)',xlab='date')
-points(plotsoil$dates, plotsoil[,7],type='l',col = 5,lty=1,ylim = c(0,50),main=CampNormTbl9_1[soiltype,1],ylab='relative humdity (%)',xlab='date')
-points(plotsoil$dates, plotsoil[,8],type='l',col = 6,lty=1,ylim = c(0,50),main=CampNormTbl9_1[soiltype,1],ylab='relative humdity (%)',xlab='date')
-points(plotsoil$dates, plotsoil[,9],type='l',col = 7,lty=1,ylim = c(0,50),main=CampNormTbl9_1[soiltype,1],ylab='relative humdity (%)',xlab='date')
-points(plotsoil$dates, plotsoil[,10],type='l',col = 8,lty=1,ylim = c(0,50),main=CampNormTbl9_1[soiltype,1],ylab='relative humdity (%)',xlab='date')
-points(plotsoil$dates, plotsoil[,11],type='l',col = 9,lty=1,ylim = c(0,50),main=CampNormTbl9_1[soiltype,1],ylab='relative humdity (%)',xlab='date')
-points(plotsoil$dates, plotsoil[,12],type='l',col = 10,lty=1,ylim = c(0,50),main=CampNormTbl9_1[soiltype,1],ylab='relative humdity (%)',xlab='date')
-points(plotsoil$dates, plotsoil[,13],type='l',col = 11,lty=1,ylim = c(0,50),main=CampNormTbl9_1[soiltype,1],ylab='relative humdity (%)',xlab='date')
-
-
-
-
-addTrans <- function(color,trans)
-{
-  # This function adds transparancy to a color.
-  # Define transparancy with an integer between 0 and 255
-  # 0 being fully transparant and 255 being fully visable
-  # Works with either color and trans a vector of equal length,
-  # or one of the two of length 1.
-  
-  if (length(color)!=length(trans)&!any(c(length(color),length(trans))==1)) stop("Vector lengths not correct")
-  if (length(color)==1 & length(trans)>1) color <- rep(color,length(trans))
-  if (length(trans)==1 & length(color)>1) trans <- rep(trans,length(color))
-  
-  num2hex <- function(x)
-  {
-    hex <- unlist(strsplit("0123456789ABCDEF",split=""))
-    return(paste(hex[(x-x%%16)/16+1],hex[x%%16+1],sep=""))
-  }
-  rgb <- rbind(col2rgb(color),trans)
-  res <- paste("#",apply(apply(rgb,2,num2hex),2,paste,collapse=""),sep="")
-  return(res)
-}
-
-obs.dep<-read.csv("c:/NicheMapR_Working/projects/WST/Water_Levels.csv")
-obs.dep$Date<-as.POSIXct(as.Date(obs.dep$Date,format="%d/%m/%Y"))
-obs.dep$Level<-obs.dep$Level*10
-obs.temp<-read.csv("c:/NicheMapR_Working/projects/WST/obs_temps2008_2009.csv")
-obs.temp$date<-strptime(obs.temp$date, format="%d/%m/%Y %H:%M", tz = tzone)
-obs.dep2<-read.csv("c:/git/wst/microclimate/ellenbrook.csv",stringsAsFactors=FALSE)
-obs.dep2$date<-strptime(obs.dep2$date, format="%d/%m/%Y", tz = tzone)
-obs.dep2<-obs.dep2[order(obs.dep2$date),]
-
-par(mfrow=c(5,2))
-    par(oma = c(2,2,2,2) + 0.1) # margin spacing stuff
-    par(mar = c(3,3,1,1) + 0.1) # margin spacing stuff 
-
-for(i in 1970:1989){
-  startdate<-paste('01/01/',i,sep='')
-  enddate<-paste('31/12/',i,sep='')
-dstart<-as.POSIXct(as.Date(startdate, "%d/%m/%Y"))-3600*11
-dfinish<-as.POSIXct(as.Date(enddate, "%d/%m/%Y"))-3600*10
-plotsoilmoist<-subset(soilmoist,  soilmoist$dates > dstart & soilmoist$dates < dfinish )
-plothumid<-subset(humid,  humid$dates > dstart & humid$dates < dfinish )
-plotsoilpot<-subset(soilpot,  soilpot$dates > dstart & soilpot$dates < dfinish )
-plotsoil<-subset(soil,  soil$dates > dstart & soil$dates < dfinish )
-plotmetout<-subset(metout,  metout$dates > dstart & metout$dates < dfinish )
-plotmetout$watertemp<-plotmetout$POOLDEPTH
-plotmetout$D0cm<-plotsoil$D0cm
-plotmetout$D5cm<-plotsoil$D5cm
-
-plotmetout$watertemp[plotmetout$watertemp > 5] <- plotmetout$D5cm[plotmetout$watertemp > 5]
-  plotmetout$watertemp[plotmetout$watertemp <= 5] <- plotmetout$D0cm[plotmetout$watertemp <= 5] 
-plot(plotmetout$dates, plotmetout[,11],type='l',col = "black",lty=1,ylab='pond depth (mm)',xlab='date',ylim=c(0,700),main=i)
-#points(obs.dep$Date,obs.dep$Level,type='p',col='blue')
-#points(obs.dep$Date,obs.dep$Level,type='l',lty=2,col='red')
-points(obs.dep2$date,obs.dep2$depth*10,type='p',col='blue')
-#points(obs.dep2$date,obs.dep2$depth*10,type='l',lty=2,col='red')
-#points(rainfall$dates,rainfall$rainfall*10,type='h',lty=1,col=addTrans("blue",70))
-# if(i>=2008){
-# plot(plotmetout$dates, plotmetout$watertemp,type='l',col = "black",lty=1,ylim = c(0,80),main=i,ylab='temperature (C)',xlab='date')
-# #points(obs.temp$date,obs.temp$WaterTemp,type='p',col='red')
-# points(obs.temp$date,obs.temp$WaterTemp,type='l',col=addTrans("red",70))
-# }
-}
-
-par(mfrow=c(1,1))
-  startdate<-'01/01/1999'
-  enddate<-'31/12/2009'
-dstart<-as.POSIXct(as.Date(startdate, "%d/%m/%Y"))-3600*11
-dfinish<-as.POSIXct(as.Date(enddate, "%d/%m/%Y"))-3600*10
-plotsoilmoist<-subset(soilmoist,  soilmoist$dates > dstart & soilmoist$dates < dfinish )
-plothumid<-subset(humid,  humid$dates > dstart & humid$dates < dfinish )
-plotsoilpot<-subset(soilpot,  soilpot$dates > dstart & soilpot$dates < dfinish )
-plotsoil<-subset(soil,  soil$dates > dstart & soil$dates < dfinish )
-plotmetout<-subset(metout,  metout$dates > dstart & metout$dates < dfinish )
-plotmetout$watertemp<-plotmetout$POOLDEPTH
-plotmetout$watertemp[plotmetout$POOLDEPTH == 0] <- plotsoil$D0cm 
-plotmetout$watertemp[plotmetout$POOLDEPTH > 0] <- plotsoil$D5cm 
-
-plot(plotmetout$dates, plotmetout[,11],type='l',col = "black",lty=1,ylab='pond depth (mm)',xlab='date')
-
-points(obs.dep$Date,obs.dep$Level,type='p',col='blue')
-points(obs.dep$Date,obs.dep$Level,type='l',lty=2,col='red')
 
 
 winter<-c("05","06","07","08","09","10")

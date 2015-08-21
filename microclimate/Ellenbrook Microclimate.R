@@ -65,8 +65,8 @@ rainfall2_all<-as.data.frame(cbind(dates2,rainfall_all))
 colnames(rainfall2_all)<-c('dates','rainfall')
 
 # choose a period
-dstart<-as.POSIXct(strptime('01/01/1997 00:00:00', "%d/%m/%Y %H:%M:%S"),tz=tzone)
-dfinish<-as.POSIXct(strptime('31/12/2006 23:00:00', "%d/%m/%Y %H:%M:%S"),tz=tzone)
+dstart<-as.POSIXct(strptime('01/01/1996 00:00:00', "%d/%m/%Y %H:%M:%S"),tz=tzone)
+dfinish<-as.POSIXct(strptime('31/12/2014 23:00:00', "%d/%m/%Y %H:%M:%S"),tz=tzone)
 
 # subset data for that period
 plotsoilmoist<-subset(soilmoist_all,  soilmoist_all$dates >= dstart & soilmoist_all$dates <= dfinish )
@@ -94,13 +94,13 @@ plotshadmet$JULDAY<-juldays
 plotrainfall<-subset(rainfall2_all,  rainfall2_all$dates >= dstart & rainfall2_all$dates <= dfinish )
 plotwetlandTemps<-subset(wetlandTemps_all,  wetlandTemps_all$dates >= dstart & wetlandTemps_all$dates <= dfinish )
 plotwetlandDepths<-subset(wetlandDepths_all,  wetlandDepths_all$dates >= dstart & wetlandDepths_all$dates <= dfinish )
-MAXSHADES<-rep(as.data.frame(read.csv(paste(microdir,'MAXSHADES1911_1926.csv',sep=""))[-1])[1,1],nrow(plotrainfall))
-ectoin<-as.data.frame(read.csv(paste(microdir,'ectoin1911_1926.csv',sep=""))[-1])
+MAXSHADES<-rep(as.data.frame(read.csv(paste(microdir,'MAXSHADES1911_2014.csv',sep=""))[-1])[1,1],nrow(plotrainfall))
+ectoin<-as.data.frame(read.csv(paste(microdir,'ectoin1911_2014.csv',sep=""))[-1])
 ectoin[7,1]<-as.numeric(format(dstart,"%Y"))
 ectoin[8,1]<-as.numeric(format(dfinish,"%Y"))
 
 
-# write output for ectotherm model
+# format output for ectotherm model
 metout<-as.matrix(plotmetout[,-1])
 soil<-as.matrix(plotsoil[,-1])
 soilpot<-as.matrix(plotsoilpot[,-1])
