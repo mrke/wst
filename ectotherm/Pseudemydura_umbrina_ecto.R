@@ -267,7 +267,7 @@ frogbreed<-4 # frog breeding mode
 frogstage<-0 # 0 is whole life cycle, 1 is just to metamorphosis (then reset and start again)
 
 # metabolic depression
-aestivate<-0
+aestivate<-1
 depress<-0.15
 
 # DEB model initial conditions
