@@ -241,16 +241,6 @@ data.tW = [ ...
 5725	235.3];
 units.tW = {'days', 'g'};     label.tW = {'age', 'mass'};  bibkey.tW = '';
 
-%  data.TO = [ ... temp (C), O2 consumption (ml/h.gwet) of 18.90108 g wet weight (5.67 g dry), based on Scott's data
-% 5   0.016422
-% 12	0.002366757/12*60
-% 20	0.007695684/12*60
-% 24	0.011011122/12*60
-% 27	0.020467552/12*60
-% 29	0.028250338/12*60
-% 30	0.032857636/12*60
-% ];
-%units.TO = {'mlO2/gwet/h', 'C'};     label.TO = {'O2 consumption rate', 'temperature'};  bibkey.TO = 'Scott_unpub; Cartland_Grimmond_1994_5C_medium';
 %ID 139; wet weight 362.4g
 data.TO = [ ... 
 %data.TO_139 = [ ... 
@@ -332,20 +322,20 @@ weight = setweights(data, []);
 % zero-variate data:
 % weight.Wdi = 100 * weight.Wdi; % Much more confidence in the ultimate dry
 %                                % weight than the other data points
- %weight.Ri = 50*weight.Ri;
- weight.Wdb = 20*weight.Wdb;
-%weight.Wdp = 10*weight.Wdp;
- weight.Wdi = 20*weight.Wdi;
- %weight.ap = 50*weight.ap;
- weight.ab = 20*weight.ab;
- weight.Li = 20*weight.Li;
- weight.Li = 20*weight.Lb;
+ weight.Ri = 50*weight.Ri;
+ weight.Wdb = 50*weight.Wdb;
+ %weight.Wdp = 10*weight.Wdp;
+ weight.Wdi = 50*weight.Wdi;
+ %weight.ap = 10*weight.ap;
+ %weight.ab = 20*weight.ab;
+ weight.Li = 50*weight.Li;
+ weight.Lb = 50*weight.Lb;
 
 % uni-variate data: 
-% weight.TO = 50 * weight.TO;
- weight.LW = 100 * weight.LW;
-weight.tL = 100 * weight.tL;
-weight.tW = 100 * weight.tW;
+ %weight.TO = 100 * weight.TO;
+ weight.LW = 50 * weight.LW;
+weight.tL = 150 * weight.tL;
+weight.tW = 150 * weight.tW;
 %% set pseudodata and respective weights
 % (pseudo data are in data.psd and weights are in weight.psd)
 [data, units, label, weight] = addpseudodata(data, units, label, weight);
