@@ -1,32 +1,4 @@
-%% mydata_my_pet
-% Sets referenced data
-
-%%
 function [data, txt_data, metadata] = mydata_Pseudemydura_umbrina 
-  % created by Starrlight Augustine, Bas Kooijman, Dina Lika, Goncalo Marques and Laure Pecquerie 2015/03/31
-  
-  %% Syntax
-  % [data, txt_data, metadata] = <../mydata_my_pet.m *mydata_my_pet*>
-  
-  %% Description
-  % Sets data, pseudodata, metadata, explanatory text, weight coefficients.
-  % Meant to be a template in add_my_pet
-  %
-  % Output
-  %
-  % * data: structure with data
-  % * txt_data: text vector for the presentation of results
-  % * metadata: structure with info about this entry
-  
-  %% To do (remove these remarks after editing this file)
-  % * copy this template; replace 'my_pet' by the name of your species
-  % * fill in metadata fields with the proper information
-  % * insert references for the data (an example is given)
-  % * edit fact-list for your species, where you can add species and/or data properties
-  % * edit real data; remove all data that to not belong to your pet
-  % * complete reference list
-  % * OPTIONAL : add discussion points / comments before the reference list
-
 %% set metadata
 
 T_C = 273.15; % K, temperature at 0 degrees C (used in T_typical)
@@ -39,303 +11,332 @@ metadata.species    = 'Pseudemydura_umbrina';
 metadata.species_en = 'Western Swamp Turtle';
 metadata.T_typical  = T_C + 17.7; % K
 metadata.data_0     = {'ab'; 'ap'; 'am'; 'Lb'; 'Lp'; 'Li'; 'Wdb'; 'Wdp'; 'Wdi'; 'Ri'};  % tags for different types of zero-variate data
-%metadata.data_1     = {'t-L', 'L-W', 'T_O'}; % tags for different types of uni-variate data
-metadata.data_1     = {'T_O','t-L', 'L-W', 't-W'}; % tags for different types of uni-variate data
+metadata.data_1     = {'t_L'; 't_W'; 'L_W'; 'T_O'}; % tags for different types of uni-variate data
 
 metadata.COMPLETE = 3.3; % Using criteria of LikaKear2011
 
 metadata.author   = {'Sophie Arnall'};                       
-metadata.date_acc = [2013 05 03];                         
-metadata.email    = {'arnals01@student.uwa.edu.au'};
+metadata.date_acc = [2016 02 12];                         
+metadata.email    = {'sophie.arnall@research.uwa.edu.au'};
 metadata.address  = {'University of Western Australia, 6009, Australia'}; 
 
-% uncomment and fill in the following fields when the entry is updated:
-% metadata.author_mod_1  = {'author2'};                       % put names as authors as separate strings:  {'author1','author2'} , with corresponding author in first place 
-% metadata.date_mod_1    = [2017 09 18];                      % [year month day], date modified entry is accepted into the collection
-% metadata.email_mod_1   = {'myname@myuniv.univ'};            % e-mail of corresponding author
-% metadata.address_mod_1 = {'affiliation, zipcode, country'}; % affiliation, postcode, country of the corresponding author
-
 %% set data
-% zero-variate data;
-% typically depend on scaled functional response f.
-% here assumed to be equal for all real data; the value of f is specified in pars_init_my_pet.
+% zero-variate data (taken from literature and zoo females)
+data.ab = 153;      units.ab = 'd';     label.ab = 'age at birth';                  bibkey.ab = 'S. Arnall unpublished data';                                comment.ab = 'Average of 8 individuals born in captivity that were incubated at 24oC constant for entire incubation period (range 126-172 days; born prior to May 1; IDs 942, 945, 946, 991, 997, 1086, 1087, 1088)';
+  temp.ab = T_C + 24.532;                                                                                                                                    comment.temp.ab = 'K, temperature; actual temp in incubator (confirmed constant; retrospective correction incubators 1,2 and 4)';
+                                                                                                                        
+data.ap = 3767;     units.ap = 'd';     label.ap = 'age at puberty';                bibkey.ap = 'S. Arnall unpublished data';                                comment.ap = 'Average time for the 12 adult females born in captivity to have first become gravid (scanned gravid; IDs 261, 324, 378, 468, 490, 496, 501, 504, 525, 618, 635, 728)';
+  temp.ap = T_C + 21;                                                                                                                                        comment.temp.ab = 'K, temperature; approximate CTE';
+                                                                                                                       
+data.am = 36500;    units.am = 'd';     label.am = 'life span';                     bibkey.am = 'S. Arnall unpublished data';                                comment.am = 'UNKNOWN. Best guess: certainly greater than 61 years (females acquired as adults in 1963 are still producing viable clutches), likely 80-100 (G. Kuchling pers comm.)';   
+  temp.am = T_C + 21;        
 
-% age 0 is at onset of embryo development
-data.ab = 250;      units.ab = 'd';    label.ab = 'age at birth';                bibkey.ab = 'Mitchell_et_al_2006';
-  temp.ab = T_C + 24.532;  bibkey.ab = 'Mitchell_et_al_2006'; % K, temperature, based on ;
-  % observed age at birth is frequently larger than ab, because of diapauzes during incubation
-data.ap = data.ab+11*365;     units.ap = 'd';    label.ap = 'age at puberty';              bibkey.ap = 'Jarvie_unpub';
-  temp.ap = T_C + 21;  bibkey.ap = 'Jarvie_unpub'; % K, temperature, based on simulation of Tb from 2000-2013 at Orford, see last lines of Sphenodon_punctatus.R;;
-  % observed age at puberty is frequently larger than ap, 
-  %   because allocation to reproduction starts before first eggs appear
-data.am = 100*365;     units.am = 'd';    label.am = 'life span';                   bibkey.am = 'Dawbin_1982';
-  temp.am = T_C + 21;  bibkey.am = 'Jarvie_unpub'; % K, temperature, based on simulation of Tb from 2000-2013 at Stephens Island/Takapourewa, see last lines of Sphenodon_punctatus.R;;
-% (accounting for aging only) 
+data.Lb  = 2.6;      units.Lb  = 'cm';   label.Lb  = 'carapace length at birth';      bibkey.Lb  = 'S. Arnall unpublished data';                                comment.Lb  = 'Average of ab individuals';
+data.Lp  = 10.7;     units.Lp  = 'cm';   label.Lp  = 'carapace length at puberty';    bibkey.Lp  = 'S. Arnall unpublished data';                                comment.Lp = 'Average of ap individuals, taken at first instance of being gravid';
+data.Li  = 13.1;     units.Li  = 'cm';   label.Li  = 'ultimate carapace length';      bibkey.Li  = {'S. Arnall unpublished data'; 'Burbidge et al. 2010'};      comment.Li = 'Best guess, based on CZ2 (largest female) who has grown less than 3mm in 10 years; "Females do not grow beyond 135mm carapace length" (Burbidge et al. 2010)';
+data.Wdb = 5.2;      units.Wdb = 'g';    label.Wdb = 'wet weight at birth';           bibkey.Wdb = {'S. Arnall unpublished data'; 'Burbidge et al. 2010'};      comment.Wdb  = 'Average of ab individuals';
+data.Wdp = 236.5;    units.Wdp = 'g';    label.Wdp = 'wet weight at puberty';         bibkey.Wdp = 'S. Arnall unpublished data';                                comment.Wdp = 'Average of ap individuals, taken at first instance of being gravid';
+data.Wdi = 417;      units.Wdi = 'g';    label.Wdi = 'ultimate wet weight';           bibkey.Wdi = 'S. Arnall unpublished data';                                comment.Wdi = 'Best guess, based on maximum weight recorded for CZ2 (largest female; 417.1g); "Females do not exceed 410g" (Burbidge et al. 2010); revision from 408g in Burbidge 1981';
+data.Ri  = 5/365;    units.Ri  = '#/d';  label.Ri  = 'maximum reprod rate';           bibkey.Ri  = 'Burbidge 1981';                                             comment.Ri = 'Females lay 3-5 eggs';  
+temp.Ri = T_C + 21; 
 
-% Please specify what type of length measurement is used for your species.
-% We put here snout-to-vent length, but you should change this depending on your species:
-data.Lb  = 2.6;   units.Lb  = 'cm';   label.Lb  = 'snout to vent length at birth';    bibkey.Lb  = 'Cree_unpub';
-data.Lp  = 10.7;   units.Lp  = 'cm';   label.Lp  = 'snout to vent length at puberty';  bibkey.Lp  = 'Cree_1994';
-data.Li  = 13.1;   units.Li  = 'cm';   label.Li  = 'ultimate snout to vent length';    bibkey.Li  = 'Jarvie_unpub';
-data.Wdb = 5.2*0.3; units.Wdb = 'g';    label.Wdb = 'dry weight at birth';              bibkey.Wdb = 'Cree_unpub';
-%find dry weight at puberty
-data.Wdp = 236.5*0.3;   units.Wdp = 'g';    label.Wdp = 'dry weight at puberty';            bibkey.Wdp = 'Cree_1994';
-data.Wdi = 417*0.3;   units.Wdi = 'g';    label.Wdi = 'ultimate dry weight';              bibkey.Wdi = 'Dawbin_1982';
-data.Ri  = 5/365;    units.Ri  = '#/d';  label.Ri  = 'maximum reprod rate';              bibkey.Ri  = 'Cree_1994';
-  % for an individual of ultimate length Li 
-  temp.Ri = T_C +  15.52;  bibkey.Ri = 'Jarvie_unpub'; % K, temperature, based on simulation of Tb from 2000-2013 at Stephens Island/Takapourewa, see last lines of Sphenodon_punctatus traits.R;
- 
-% uni-variate data
+%% uni-variate data
+% carapace length and wet weight were measured at the same time
+%==========================================================================
+%TIME-LENGTH CAPTIVE FEMALE SET; n=6
+data.tL = [ ...
+% ID 261
+1       2.56
+382     5.38
+740     6.82
+1117	6.91
+1505	7.86
+1608	7.84
+1886	7.93
+2276	8.45
+2646	8.46
+3027	9.42
+3369	10.33
+3793	10.46
+4145	10.57
+4838	10.95
+5223	10.98
+5567	11.07
+6309	11.21
+% ID 378
+1       2.59
+363     6.53
+717     6.88
+1135	6.91
+1511	7.35
+1888	8.38
+2241	8.88
+2611	10.21
+3008	10.27
+3430	10.27
+4081	10.34
+4469	10.42
+4810	10.69
+5556	11.11
+% ID 501
+1       2.81
+365     7.03
+794     7.8
+1152	7.93
+1524	8.5
+1911	9.77
+2277	10.35
+2994	10.75
+3386	10.76
+3722	10.96
+4477	11.16
+% ID 525
+1       2.79
+400     6.88
+794     8.04
+1160	8.34
+1559	9.09
+1918	9.79
+2671	10.62
+3018	10.78
+3367	10.96
+% ID 635
+1       2.58
+407     6.87
+765     7.61
+1165	8.05
+1921	8.26
+2268	8.67
+2615	9.15
+2977	9.9
+3345	9.95
+% ID 728
+1       2.5
+420     7.18
+1186	8.86
+1533	9.17
+1881	9.35
+2242	9.71
+2610	10.34];
+units.tL = {'d', 'mm'}; label.tL = {'time since birth', 'midline carapace length'};  bibkey.tL = ''; temp.tL = T_C + 21;  % K,
 
-% uni-variate data at f = 1.0 (this value should be added in pars_init_my_pet as a parameter f_tL) 
-% snout-to-vent length and wet weight were measured at the same time
-%data.tL = [0	539.105	1036.6	1526.43	2023.925	2573.615	3170.39	3872.285	4534.395	5254.905	5982.715	6844.115	7784.355	8729.705	9691.115	10644.13	11670.875	12692.145	13765.975	14779.58	15753.765	16809.345	17830.98	18897.145	19950.17	20934.94	21851.09;    % d, time since birth
-%           5.037	6.256	7.4811	8.725	9.8895	11.0948	12.2177	13.3859	14.4665	15.4192	16.2948	17.0951	17.8422	18.5323	19.1243	19.6361	20.0568	20.3866	20.6559	20.9325	21.1449	21.3802	21.5316	21.6226	21.7174	21.7815	21.8688]';  % cm, snout-to-vent length at f and T
-%units.tL = {'d', 'cm'};     label.tL = {'time since birth', 'snout to vent length'};  bibkey.tL = 'Dawbin_1982';
-%  temp.tL = T_C + 15.52;  % K, temperature
+%==========================================================================
+% LENGTH-WEIGHT CAPTIVE FEMALE SET; n=6
+data.LW = [ ...
+% ID 261
+2.56	4.7
+5.38	32.7
+6.82	62.4
+6.91	64.5
+7.86	91.4
+7.84	94.3
+7.93	95.7
+8.45	118.7
+8.46	119
+9.42	150.7
+10.33	195.4
+10.46	212.3
+10.57	218.5
+10.95	229.2
+10.98	228.8
+11.07	232.1
+11.21	247.2
+% ID 378
+2.59	4.3
+6.53	51.2
+6.88	62.3
+6.91	64.7
+7.35	77.5
+8.38	98.3
+8.88	117.7
+10.21	176.7
+10.27	185.3
+10.27	190.3
+10.34	191.7
+10.42	196.3
+10.69	203.6
+11.11	230.9
+% ID 501
+2.81	5.5
+7.03	67.5
+7.8     82.7
+7.93	92
+8.5     105.7
+9.77	152.9
+10.35	183
+10.75	193
+10.76	198.8
+10.96	203.2
+11.16	221.3
+% ID 525
+2.79	5.6
+6.88	57.8
+8.04	94.6
+8.34	102.7
+9.09	128
+9.79	155.5
+10.62	207.3
+10.78	213.6
+10.96	215
+% ID 635
+2.58	5.3
+6.87	60.9
+7.61	82.1
+8.05	98
+8.26	112.9
+8.67	117.9
+9.15	142.1
+9.9     176
+9.95	197.5
+% ID 728
+2.5     4.8
+7.18	68.6
+8.86	120.9
+9.17	128.1
+9.35	135.4
+9.71	148.7
+10.34	182.7];   
+units.LW = {'cm', 'g'}; label.LW = {'midline carapace length', 'wet weight'};  bibkey.LW = ''; 
 
-data.tL = [1	8	15	22	29	36	43	50	57	64	71	78	84	91	98	105	112;    % d, time since birth
-           2.36	2.52	2.23	2.7	2.82	2.91	3.08	3.22	3.33	3.47	3.72	3.87	3.98	4.12	4.18	4.29    4.3]';  % cm, snout-to-vent length at f and T
-units.tL = {'d', 'cm'};     label.tL = {'time since birth', 'snout to vent length'};  bibkey.tL = 'Dawbin_1982';
-  temp.tL = T_C + 17.5;  % K, temperature
-
-data.LW = [2.36	2.52	2.23	2.7	2.82	2.91	3.08	3.22	3.33	3.47	3.72	3.87	3.98	4.12	4.18	4.29    4.3;      % cm, snout-to-vent length at f
-           4.1	4.7	5	5.7	6.3	6.9	7.4	8.2	8.9	9.6	11.7	13.1	13.9	14.7	15.6	16.5	17.5]';   % g, wet weight at f and T
-units.LW = {'cm', 'g'};     label.LW = {'snout to vent length', 'wet weight'};  bibkey.LW = 'Dawbin_1982';
+%==========================================================================
+%TIME-WEIGHT CAPTIVE FEMALE SET; n=6
 data.tW = [ ...
-1	5.7
-280	40.5
-369	34.9
-386	43
-614	59.9
-736	53.5
-766	59.8
-809	61.4
-838	61.3
-868	61.7
-898	63.1
-930	67.4
-950	64.1
-1129	71
-1150	72.9
-1180	74.5
-1206	73.9
-1235	74.5
-1262	83.2
-1290	95.8
-1317	99.5
-1340	93.7
-1468	101.3
-1508	101.9
-1542	100.4
-1570	103.1
-1605	104.1
-1627	104.7
-1659	103.9
-1699	98
-1844	102.5
-1879	104.9
-1910	107.6
-1940	114.3
-1972	118.1
-2001	131.5
-2032	137.1
-2059	137.2
-2078	133
-2204	137
-2266	137
-2295	139.1
-2326	141.1
-2360	146.6
-2394	143
-2441	135
-2583	142.7
-2625	145.9
-2657	149.1
-2688	152.9
-2716	164.7
-2745	175.3
-2778	182.7
-2805	163.2
-2850	184
-2880	182
-2934	173.8
-3008	177.4
-3037	183
-3066	187.5
-3094	195.5
-3121	188.1
-3154	177.5
-3315	189.1
-3378	189.2
-3391	192.5
-3439	198.1
-3470	194.9
-3538	183.5
-3692	184.3
-3725	189.9
-3754	195.6
-3784	205.1
-3819	217.3
-3862	223.3
-3883	237.8
-3915	241.1
-3946	233.4
-3969	226
-4049	215
-4074	226.6
-4084	225.5
-4106	229.2
-4121	230.9
-4140	234.4
-4147	238.4
-4176	249.2
-4200	233.4
-4232	235.1
-4266	225.6
-4416	219.2
-4450	222.6
-4452	210.8
-4480	215.8
-4481	207
-4500	233.2
-4533	253.4
-4570	246.9
-4599	244.9
-4632	227.2
-4779	237
-4810	250
-4867	245.9
-4937	257.1
-4986	259.2
-5028	260
-5059	257.9
-5088	245.5
-5147	258.3
-5176	257
-5196	262.3
-5213	267.7
-5231	261.9
-5232	268.9
-5247	280.5
-5254	282.2
-5265	284.6
-5272	288.7
-5283	287.6
-5293	261.2
-5299	271.2
-5311	280.4
-5316	278.9
-5329	254.9
-5360	237.8
-5502	251.4
-5536	253.4
-5552	248.5
-5554	262.4
-5609	273.8
-5621	273
-5631	280.3
-5642	289.7
-5651	271.1
-5704	263.9
-5725	235.3];
-units.tW = {'days', 'g'};     label.tW = {'age', 'mass'};  bibkey.tW = '';
+% ID 261
+1       4.7
+382     32.7
+740     62.4
+1117	64.5
+1505	91.4
+1608	94.3
+1886	95.7
+2276	118.7
+2646	119
+3027	150.7
+3369	195.4
+3793	212.3
+4145	218.5
+4838	229.2
+5223	228.8
+5567	232.1
+6309	247.2
+% ID 378
+1       4.3
+363     51.2
+717     62.3
+1135	64.7
+1511	77.5
+1888	98.3
+2241	117.7
+2611	176.7
+3008	185.3
+3430	190.3
+4081	191.7
+4469	196.3
+4810	203.6
+5556	230.9
+% ID 501
+1       5.5
+365     67.5
+794     82.7
+1152	92
+1524	105.7
+1911	152.9
+2277	183
+2994	193
+3386	198.8
+3722	203.2
+4477	221.3
+% ID 525
+1       5.6
+400     57.8
+794     94.6
+1160	102.7
+1559	128
+1918	155.5
+2671	207.3
+3018	213.6
+3367	215
+% ID 635
+1       5.3
+407     60.9
+765     82.1
+1165	98
+1921	112.9
+2268	117.9
+2615	142.1
+2977	176
+3345	197.5
+% ID 728
+1       4.8
+420     68.6
+1186	120.9
+1533	128.1
+1881	135.4
+2242	148.7
+2610	182.7];
+units.tW = {'d', 'g'}; label.tW = {'time since birth', 'wet weight'};  bibkey.tW = ''; temp.tW = T_C + 21;  % K, temperature
 
+%==========================================================================  
+% METABOLIC DATA; n=8
 %ID 139; wet weight 362.4g
 data.TO = [ ... 
-%data.TO_139 = [ ... 
 15	0.002085919
 21	0.006957514
 25	0.01929228
-31	0.03080439%];
-%units.TO_139 = {'C', 'ml O2/g/h'};     label.TO_139 = {'temp', 'O2 consumption'};  bibkey.TO_139 = 'Arnall et al. 2015';
-
+31	0.03080439
 % ID 204; wet weight 288.2g
-%data.TO_204 = [ ... 
 15	0.002556972
 21	0.007311692
 25	0.01694881
-31	0.02668169%];
-%units.TO_204 = {'C', 'ml O2/g/h'};     label.TO_204 = {'temp', 'O2 consumption'};  bibkey.TO_204 = 'Arnall et al. 2015';
-
+31	0.02668169
 % ID 269; wet weight 297.2g
-%data.TO_269 = [ ... 
 15	0.001478324
 21	0.005955151
 25	0.01790451
-31	0.03496208%];
-%units.TO_269 = {'C', 'ml O2/g/h'};     label.TO_269 = {'temp', 'O2 consumption'};  bibkey.TO_269 = 'Arnall et al. 2015';
-
-
+31	0.03496208
 % ID 354; wet weight 277.3g
-%data.TO_354 = [ ... 
 15	0.001204873
 21	0.006027985
 25	0.01742385
-31	0.02480775%];
-%units.TO_354 = {'C', 'ml O2/g/h'};     label.TO_354 = {'temp', 'O2 consumption'};  bibkey.TO_354 = 'Arnall et al. 2015';
-
-
+31	0.02480775
 % ID 524; wet weight 322.0g
-%data.TO_524 = [ ... 
 15	0.001312231
 21	0.005149532
 25	0.01897694
-31	0.02305341%];
-%units.TO_524 = {'C', 'ml O2/g/h'};     label.TO_524 = {'temp', 'O2 consumption'};  bibkey.TO_524 = 'Arnall et al. 2015';
-
-
+31	0.02305341
 % ID 690; wet weight 293.5g
-%data.TO_690 = [ ... 
 15	0.002410638
 21	0.008921721
 25	0.01756489
-31	0.02747758%];
-%units.TO_690 = {'C', 'ml O2/g/h'};     label.TO_690 = {'temp', 'O2 consumption'};  bibkey.TO_690 = 'Arnall et al. 2015';
-
-
+31	0.02747758
 % ID 716; wet weight 269.3g
-%data.TO_716 = [ ... 
 15	0.001236561
 21	0.006155903
 25	0.01767426
-31	0.02939617%];
-%units.TO_716 = {'C', 'ml O2/g/h'};     label.TO_716 = {'temp', 'O2 consumption'};  bibkey.TO_716 = 'Arnall et al. 2015';
-
-
+31	0.02939617
 % ID Z1; wet weight 308.7g
-%data.TO_Z1 = [ ... 
 15	0.002687078
 21	0.005811912
 25	0.01850031
 31	0.03345558];
-units.TO_Z1 = {'C', 'ml O2/g/h'};     label.TO_Z1 = {'temp', 'O2 consumption'};  bibkey.TO_Z1 = 'Arnall et al. 2015';
-units.TO = {'C', 'ml O2/g/h'};     label.TO = {'temp', 'O2 consumption'};  bibkey.TO = 'Arnall et al. 2015';
+units.TO = {'C', 'ml O2/g/h'}; label.TO = {'temp', 'O2 consumption'};  bibkey.TO = 'Arnall et al. 2015';
 
 %% set weights for all real data
 weight = setweights(data, []);
 
 %% overwriting weights (remove these remarks after editing the file)
-% the weights were set automatically with the function setweigths,
-% if one wants to ovewrite one of the weights it should always present an explanation example:
-%
-% zero-variate data:
-% weight.Wdi = 100 * weight.Wdi; % Much more confidence in the ultimate dry
-%                                % weight than the other data points
- weight.Ri = 50*weight.Ri;
- weight.Wdb = 50*weight.Wdb;
- %weight.Wdp = 10*weight.Wdp;
- weight.Wdi = 50*weight.Wdi;
- %weight.ap = 10*weight.ap;
- %weight.ab = 20*weight.ab;
- weight.Li = 50*weight.Li;
- weight.Lb = 50*weight.Lb;
+ weight.Wdb = 20*weight.Wdb;
+ weight.Wdi = 20*weight.Wdi;
+ weight.ab = 20*weight.ab;
+ weight.Li = 20*weight.Li;
+ weight.Li = 20*weight.Lb;
 
 % uni-variate data: 
- %weight.TO = 100 * weight.TO;
- weight.LW = 50 * weight.LW;
-weight.tL = 150 * weight.tL;
-weight.tW = 150 * weight.tW;
+% weight.TO = 50 * weight.TO;
+weight.LW = 100 * weight.LW;
+weight.tL = 100 * weight.tL;
+weight.tW = 100 * weight.tW;
+
 %% set pseudodata and respective weights
 % (pseudo data are in data.psd and weights are in weight.psd)
 [data, units, label, weight] = addpseudodata(data, units, label, weight);
@@ -354,38 +355,72 @@ txt_data.units = units;
 txt_data.label = label;
 txt_data.bibkey = bibkey;
 
+
 %% References
-  bibkey = 'Wiki'; type = 'Misc'; bib = ...
-  'URL = {https://en.wikipedia.org/wiki/Tuatara}';   % replace my_pet by latin species name
-  eval(['metadata.biblist.' bibkey, '= ''@', type, '{', bibkey, ', ' bib, '}'';']);
-  %
-  bibkey = 'Kooy2010'; type = 'Book'; bib = [ ...  % used in setting of chemical parameters and pseudodata
-  'author = {Kooijman, S.A.L.M.}, ' ...
-  'year = {2010}, ' ...
-  'title  = {Dynamic Energy Budget theory for metabolic organisation}, ' ...
-  'publisher = {Cambridge Univ. Press, Cambridge}, ' ...
-  'pages = {Table 4.2 (page 150), 8.1 (page 300)}, ' ...
-  'URL = {http://www.bio.vu.nl/thb/research/bib/Kooy2010.html}'];
-  eval(['metadata.biblist.' bibkey, '= ''@', type, '{', bibkey, ', ' bib, '}'';']);
-  %
-  bibkey = 'Jarvie_unpub'; type = 'Thesis'; bib = [ ... % meant as example; replace this and further bib entries
-  'author = {Jarvie, S. and Cree, A.}, ' ...
-  'year = {2015}, ' ...
-  'title = {TBA}'];
-  eval(['metadata.biblist.' bibkey, '= ''@', type, '{', bibkey, ', ' bib, '}'';']);
-  %
-  bibkey = 'Anon2015'; type = 'Misc'; bib = [ ...
-  'author = {Anonymous}, ' ...
-  'year = {2015}, ' ...
-  'URL = {http://www.fishbase.org/summary/Rhincodon-typus.html}'];
-  eval(['metadata.biblist.' bibkey, '= ''@', type, '{', bibkey, ', ' bib, '}'';']);
+%   %  
+%   bibkey = 'S. Arnall unpublished data.'; type = 'Misc'; bib = ...
+%   'Arnall, Sophie <arnals01@student.uwa.edu.au>'; 
+%   eval(['metadata.biblist.' bibkey, '= ''@', type, '{', bibkey, ', ' bib, '}'';']);
+%  
+%     %
+%   bibkey = 'Burbidge et al. 2010'; type = 'Report'; bib = [ ... 
+%   'author = {Burbidge A. A.}, {Kuchling G.}, {Olejnik C.}, {Mutter L.} ' ...
+%   'year = {2010}, ' ...
+%   'title  = {Western Swamp Tortoise (Pseudemydura umbrina) recovery plan, 4th edition}, ' ...
+%   'publisher = {Department of Parks and Wildlife, Western Australia}, ' ...
+%   ];
+%   eval(['metadata.biblist.' bibkey, '= ''@', type, '{', bibkey, ', ' bib, '}'';']);
+%   
+%     %
+%   bibkey = 'Burbidge 1981'; type = 'Article'; bib = [ ... 
+%   'author = {Burbidge A. A.}, ' ... 
+%   'year = {1981}, ' ...
+%   'title = {The ecology of the western swamp tortoise Pseudemydura umbrina (Testudines: Chelidae)}, ' ...
+%   'journal = {Australian Wildlife Research}, ' ...
+%   'volume = {8}, ' ...
+%   'pages = {203-223}'];
+%   eval(['metadata.biblist.' bibkey, '= ''@', type, '{', bibkey, ', ' bib, '}'';']);
+%   
+%      %
+%   bibkey = 'Arnall et al. 2015'; type = 'Article'; bib = [ ... 
+%   'author = {Arnall S}, {Kuchling G.}, {Mitchell N.}' ... 
+%   'year = {2015}, ' ...
+%   'title = {A thermal profile of metabolic performance in the rare Australian chelid, Pseudemydura umbrina}, ' ...
+%   'journal = {Australian Journal of Zoology}, ' ...
+%   'volume = {62}, ' ...
+%   'pages = {448-453}'];
+%   eval(['metadata.biblist.' bibkey, '= ''@', type, '{', bibkey, ', ' bib, '}'';']);
+%     
+%     %
+%   bibkey = 'S. Arnall pers. obs.'; type = 'Misc'; bib = ...
+%   'Arnall, Sophie <arnals01@student.uwa.edu.au>'; 
+%   eval(['metadata.biblist.' bibkey, '= ''@', type, '{', bibkey, ', ' bib, '}'';']);
+%   
+%     %
+%   bibkey = 'G. Kuchling pers. obs.'; type = 'Misc'; bib = [ ... 
+%   'Kuchling, Gerald <Gerald.Kuchling@DPaW.wa.gov.au>'
+%   eval(['metadata.biblist.' bibkey, '= ''@', type, '{', bibkey, ', ' bib, '}'';']);];
+% 
 
 %% Facts
-% * Standard model with egg (not foetal) development and no acceleration
+ 
+F1 = 'All stages experience torpor, and torpor is implemented by letting f switch backwards and forwards from f_zoo to 0';
+F2 = 'Torpor occurs approximately late-December until mid-May every year (zoo popn)';
+metadata.bibkey.F2 = 'S. Arnall pers. obs.'; 
+F3 = 'Mating occurs after torpor in the pond, approximately July-August (zoo popn)';
+metadata.bibkey.F3 = 'S. Arnall pers. obs.'; 
+F4 = 'Egg laying occurs before torpor, approximately November-December'; 
+metadata.bibkey.F4 = 'S. Arnall pers. obs.'; 
+F5 = 'Torpor seems required for reproduction';
+metadata.bibkey.F5 = 'G. Kuchling pers. obs.'; 
+F6 = 'Average mass loss over torpor period is 7.9%, no corresponding significant change to length (0.2mm; 2012-2013 data collected by S. Arnall)';
+metadata.bibkey.F6 = 'S. Arnall unpublished data'; 
+F7 = 'Some individuals occasionally undergo a half-torpor season due to being used in the public exhibit pond';
+metadata.bibkey.F7 = 'S. Arnall pers. obs.'; 
+F8 = 'All coupling/mating, entry into torpor, and exit from torpor is artificially imposed by staff at Perth Zoo. Females may have been capable of becoming gravid ealier if given opportunity to mate prior.';
+metadata.bibkey.F8 = 'S. Arnall pers. obs.'; 
+ 
+metadata.facts = struct('F1',F1,'F2',F2,'F3',F3,'F4',F4,'F5',F5,'F6',F6,'F7',F7,'F8',F8);
   
 %% Discussion points
-pt1 = 'Kearney: there is a github repository for this project git/mrke/tuatara';
-pt2 = 'Kearney: TA was estimated from Yuni''s unpublished data on sprint speed (/sprint speed/sprint_speed_N_occelatus_Yuni.csv), using script /sprint speed/TA from sprint speed.R';
-pt3 = 'Jarvie: metabolic rates were extracted from Jarvie''s measurements of metabolic rate at six temperatures (12, 20, 24, 27, 29 and 30C). We only used metabolic rate for animals presumed to be females, due to the temperatures that they were incubated at. We also used a metabolic rate measurement at 5C, for medium-sized animals, from Cartland Grimmond 1994';
-pt4 = 'Kearney: Temperatures for ';     
-metadata.discussion = {pt1; pt2; pt3; pt4};
+
