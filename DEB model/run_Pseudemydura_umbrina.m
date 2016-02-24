@@ -12,7 +12,9 @@ pets = {'Pseudemydura_umbrina'};
 estim_options('default'); % runs estimation, uses nmregr method and filter
                           % prints results, does not write file, does not produce html
 % 'method':           'nm' - use Nelder-Mead method (default); 'no' - do not estimate;
-% 'pars_init_method': 0 - get initial estimates from automatized computation (default)
+% 'pars_init_method': 0 - get initial estimates from automatized
+% computation (default) 
+
 %                     1 - read initial estimates from .mat file 
 %                     2 - read initial estimates from pars_init file 
 % 'results_output':   0 - prints results to screen; (default)
